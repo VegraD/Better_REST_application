@@ -5,6 +5,7 @@ requests. It also extracts the port from the environment variables and sets it t
 package main
 
 import (
+	"assignment-2/constants"
 	"log"
 	"net/http"
 	"os"
@@ -15,14 +16,14 @@ func main() {
 	// Extract port from env
 	port := os.Getenv("PORT")
 
-	// Set to default if not set
+	// Set port to default if it has not been set
 	if port == "" {
-		log.Println("$PORT has not been set. Default: 8080")
-		port = "8080"
+		log.Println("$PORT has not been set. Default: " + constants.DefaultPort + " will be used.")
+		port = constants.DefaultPort
 	}
 
 	// TODO: Add handlers
-	// http.HandleFunc("/path", handlerpackage.handler)
+	// E.g., http.HandleFunc("/path", handlerpackage.handler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
