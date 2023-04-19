@@ -9,9 +9,10 @@ const (
 	DefaultPort string = "8080"
 )
 
+// TODO: ?maybe? add comments to explain what each endpoint is used for as it's done for the default port
 // Endpoint paths
-// TODO: ?maybe? add comments to explain what each endpoint is used for as is done for the default port
 const (
+	DefaultEndpoint       string = "/"
 	CurrentEndpoint       string = renewablesEndpoint + "/current"
 	HistoryEndpoint       string = renewablesEndpoint + "/history"
 	NotificationsEndpoint string = baseEndpoint + "/notifications"
