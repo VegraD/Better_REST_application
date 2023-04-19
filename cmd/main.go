@@ -6,6 +6,7 @@ package main
 
 import (
 	"assignment-2/constants"
+	"assignment-2/handlers"
 	"log"
 	"net/http"
 	"os"
@@ -22,8 +23,8 @@ func main() {
 		port = constants.DefaultPort
 	}
 
-	// TODO: Add handlers
-	// E.g., http.HandleFunc("/path", handlerpackage.handler)
+	// Register handlers
+	http.HandleFunc("/", handlers.DefaultHandler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
