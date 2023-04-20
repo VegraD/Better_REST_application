@@ -9,7 +9,6 @@ const (
 	DefaultPort string = "8080"
 )
 
-// TODO: ?maybe? add comments to explain what each endpoint is used for as it's done for the default port
 // Endpoint paths
 const (
 	DefaultEndpoint       string = "/"
@@ -17,6 +16,12 @@ const (
 	HistoryEndpoint       string = renewablesEndpoint + "/history"
 	NotificationsEndpoint string = baseEndpoint + "/notifications"
 	StatusEndpoint        string = baseEndpoint + "/status"
+)
+
+// External API paths
+const (
+	CountryApi    = "http://129.241.150.113:8080/v3.1"
+	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
 )
 
 // ################################# Unexported constants below this line #################################
