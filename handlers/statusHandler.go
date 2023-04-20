@@ -23,40 +23,38 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getApiStatus(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return resp.Status
+}
+
 /*
 handleStatusRequest is a method to check the status for the apis that is used
 in the program, and "pretty print" it to the user.
 */
 func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 
-	countryResp, err := http.Get(constants.CountryApi)
-	if err != nil {
-		log.Fatal(err)
-	}
-	renewablesResp, err := http.Get(constants.RenewablesApi)
-	if err != nil {
-		log.Fatal(err)
-	}
+	countryResp := getApiStatus(constants.CountryApi)
+	renewablesResp := getApiStatus(constants.RenewablesApi)
+
 	//TODO: Add correct url
-	notificationResp, err := http.Get("https://restcountries.com/")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// TODO: Add correct url
-	webhookResp, err := http.Get("https://restcountries.com/")
-	if err != nil {
-		log.Fatal(err)
-	}
+	notificationResp := getApiStatus("https://restcountries.com/")
+
+	//TODO: Add correct url
+	webhookResp := getApiStatus("https://restcountries.com/")
 
 	json_coder.PrettyPrint(w, Status(countryResp, renewablesResp, notificationResp, webhookResp))
 }
 
-func Status(country *http.Response, renewables *http.Response, notification *http.Response, webhook *http.Response) structs.Status {
+func Status(country string, renewables string, notification string, webhook string) structs.Status {
 	return structs.Status{
-		CountriesApi:   country.Status,
-		RenewablesApi:  renewables.Status,
-		NotificationDB: notification.Status,
-		Webhooks:       webhook.Status,
+		CountriesApi:   country,
+		RenewablesApi:  renewables,
+		NotificationDB: notification,
+		Webhooks:       webhook,
 		Version:        constants.Version,
 		Uptime:         utils.Uptime(),
 	}
