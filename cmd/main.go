@@ -25,6 +25,7 @@ func main() {
 
 	// Register handlers
 	http.HandleFunc("/", handlers.DefaultHandler)
+	http.HandleFunc(constants.CurrentEP, handlers.CurrentHandler)
 	http.HandleFunc(constants.StatusEP, handlers.StatusHandler)
 
 	// Start http server
