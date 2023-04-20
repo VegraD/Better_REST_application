@@ -3,6 +3,9 @@ package constants
 // Programs version as constant
 const VERSION = "v1"
 
+// port as constant
+const DEFAULT_PORT = "8080"
+
 // Url Paths as constants
 const COUNTRY_API = "http://129.241.150.113:8080/v3.1"
 const RENEWABLES_API = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
