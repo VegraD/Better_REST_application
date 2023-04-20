@@ -1,6 +1,12 @@
-package cmd
+/*
+Package main contains the main function for the application. It is responsible for starting the server and handling
+requests. It also extracts the port from the environment variables and sets it to the default port if it is not set.
+*/
+package main
 
 import (
+	"assignment-2/constants"
+	"assignment-2/handlers"
 	"log"
 	"net/http"
 	"os"
@@ -8,19 +14,19 @@ import (
 
 func main() {
 
-	// extract port from env
+	// Extract port from env
 	port := os.Getenv("PORT")
 
-	// set to default if not set
+	// Set port to default if it has not been set
 	if port == "" {
-		log.Println("$PORT has not been set. Default: 8080")
-		port = "8080"
+		log.Println("$PORT has not been set. Default: " + constants.DefaultPort + " will be used.")
+		port = constants.DefaultPort
 	}
 
-	// TODO: Add handlers
-	// http.HandleFunc("/", handlerpackage.handler)
+	// Register handlers
+	http.HandleFunc("/", handlers.DefaultHandler)
 
-	// start http server
+	// Start http server
 	log.Println("Starting server on port " + port + " ...")
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
