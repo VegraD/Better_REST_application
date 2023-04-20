@@ -25,6 +25,7 @@ func main() {
 
 	// Register handlers
 	http.HandleFunc("/", handlers.DefaultHandler)
+	http.HandleFunc(constants.StatusEndpoint, handlers.StatusHandler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
