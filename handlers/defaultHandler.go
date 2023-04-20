@@ -9,12 +9,12 @@ import (
 // DefaultHandler handles requests to the default endpoint.
 func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 
-	// TODO: Find a better way.
+	// TODO: Temporary! Find a better way.
 	if r.URL.Path != "/" {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
 
-	// Custom func for displaying the HTML file.
+	// Custom func for displaying the HTML file in the browser that handles errors.
 	utils.DisplayHTML(w, constants.DefaultHtml)
 }

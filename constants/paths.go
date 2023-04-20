@@ -11,16 +11,28 @@ const (
 
 // Endpoint paths
 const (
-	DefaultEndpoint       string = "/"
-	CurrentEndpoint       string = renewablesEndpoint + "/current"
-	HistoryEndpoint       string = renewablesEndpoint + "/history"
-	NotificationsEndpoint string = baseEndpoint + "/notifications"
-	StatusEndpoint        string = baseEndpoint + "/status"
+	// DefaultEP is the default endpoint path.
+	DefaultEP string = "/"
+
+	// CurrentEP is the endpoint path for retrieving current renewable energy production.
+	CurrentEP string = renewablesEP + "/current"
+
+	// HistoryEP is the endpoint path for retrieving historical renewable energy production.
+	HistoryEP string = renewablesEP + "/history"
+
+	// NotificationsEP is the endpoint path for retrieving notifications.
+	NotificationsEP string = baseEP + "/notifications"
+
+	// StatusEP is the endpoint path for retrieving the status of the application.
+	StatusEP string = baseEP + "/status"
 )
 
 // External API paths
 const (
-	CountryApi    = "http://129.241.150.113:8080/v3.1"
+	// CountryApi is the endpoint path for retrieving country information.
+	CountryApi = "http://129.241.150.113:8080/v3.1"
+
+	// RenewablesApi is the endpoint path for retrieving renewable energy production information.
 	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
 )
 
@@ -28,6 +40,6 @@ const (
 
 // Base endpoint paths
 const (
-	baseEndpoint       string = "/energy/v1"
-	renewablesEndpoint string = baseEndpoint + "/renewables"
+	baseEP       string = "/energy/v1"
+	renewablesEP string = baseEP + "/renewables"
 )
