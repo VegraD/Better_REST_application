@@ -3,22 +3,26 @@ Package constants contains all constants used in the application. This includes 
 */
 package constants
 
+// Ports
+const (
+	// DefaultPort is the default port used by the application if the environment variable PORT is not set.
+	DefaultPort string = "8080"
+)
+
 // TODO: ?maybe? add comments to explain what each endpoint is used for as it's done for the default port
-// TODO: Sånn her du tenker? -Nicolai
 // Endpoint paths
 const (
-	// DefaultEndpoint is the default endpoint for the application.
-	DefaultEndpoint string = "/"
+	DefaultEndpoint       string = "/"
+	CurrentEndpoint       string = renewablesEndpoint + "/current"
+	HistoryEndpoint       string = renewablesEndpoint + "/history"
+	NotificationsEndpoint string = baseEndpoint + "/notifications"
+	StatusEndpoint        string = baseEndpoint + "/status"
+)
 
-	// currentEndpoint is the endpoint for the current renewable energy production for the given country
-	CurrentEndpoint = DEFAULT_PATH + RENEWABLES_PATH + CURRENT_PATH
+// ################################# Unexported constants below this line #################################
 
-	// HistoryEndpoint is the endpoint for the history of renewable energy production for the given country
-	HistoryEndpoint = DEFAULT_PATH + RENEWABLES_PATH + HISTORY_PATH
-
-	// NotificationsEndpoint is the endpoint for the notifications for the given country
-	NotificationsEndpoint = DEFAULT_PATH + NOTIFICATION_PATH
-
-	// StatusEndpoint is the endpoint for the status of the api
-	StatusEndpoint = DEFAULT_PATH + STATUS_PATH
+// Base endpoint paths
+const (
+	baseEndpoint       string = "/energy/v1"
+	renewablesEndpoint string = baseEndpoint + "/renewables"
 )
