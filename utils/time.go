@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -16,7 +15,10 @@ func Uptime() string {
 	runtime := time.Since(StartTime).Seconds()
 
 	// Convert the time to a string with 2 decimals
-	uptime := strconv.FormatFloat(runtime, 'f', 2, 64)
+	//uptime := strconv.FormatFloat(runtime, 'f', 2, 64)
+
+	// Convert the time to hours, minutes and seconds. E.g., 1h 2m 3s and round to 2 decimals
+	uptime := time.Duration(runtime * float64(time.Second)).Round(time.Second).String()
 
 	return uptime
 }
