@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"assignment-2/constants"
+	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
 	"log"
@@ -32,6 +33,10 @@ func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	renewablesResp, err := http.Get(constants.RenewablesApi)
+	if err != nil {
+		log.Fatal(err)
+	}
 	//TODO: Add correct url
 	notificationResp, err := http.Get("https://restcountries.com/")
 	if err != nil {
@@ -43,12 +48,13 @@ func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	json_coder.PrettyPrint(w, Status(countryResp, notificationResp, webhookResp))
+	json_coder.PrettyPrint(w, Status(countryResp, renewablesResp, notificationResp, webhookResp))
 }
 
-func Status(country *http.Response, notification *http.Response, webhook *http.Response) structs.Status {
+func Status(country *http.Response, renewables *http.Response, notification *http.Response, webhook *http.Response) structs.Status {
 	return structs.Status{
 		CountriesApi:   country.Status,
+		RenewablesApi:  renewables.Status,
 		NotificationDB: notification.Status,
 		Webhooks:       webhook.Status,
 		Version:        constants.Version,

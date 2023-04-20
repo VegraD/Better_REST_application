@@ -16,6 +16,7 @@ type WebHook struct {
 
 type Status struct {
 	CountriesApi   string `json:"countries_api"`
+	RenewablesApi  string `json:"renewable_api"`
 	NotificationDB string `json:"notification_db"`
 	Webhooks       string `json:"webhooks"`
 	Version        string `json:"version"`
