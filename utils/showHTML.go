@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"assignment-2/constants"
 	"io"
 	"log"
 	"net/http"
@@ -28,7 +29,7 @@ func DisplayHTML(w http.ResponseWriter, filePath string) {
 	defer func() {
 		err := file.Close()
 		if err != nil {
-			log.Printf("Failed to close file: %s", err)
+			log.Printf(constants.CloseFileFail+"%s", err)
 		}
 	}()
 
