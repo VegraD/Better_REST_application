@@ -6,7 +6,10 @@ package main
 
 import (
 	"assignment-2/constants"
-	"assignment-2/handlers"
+	"assignment-2/handlers/currentHandler"
+	"assignment-2/handlers/defaultHandler"
+	"assignment-2/handlers/historicalHandler"
+	"assignment-2/handlers/statusHandler"
 	"fmt"
 	"log"
 	"net/http"
@@ -26,10 +29,10 @@ func main() {
 	}
 
 	// Register handlers
-	http.HandleFunc(constants.DefaultEP, handlers.DefaultHandler)
-	http.HandleFunc(constants.CurrentEP, handlers.CurrentHandler)
-	http.HandleFunc(constants.StatusEP, handlers.StatusHandler)
-	http.HandleFunc(constants.HistoryEP, handlers.HistoricalHandler)
+	http.HandleFunc(constants.DefaultEP, defaultHandler.DefaultHandler)
+	http.HandleFunc(constants.CurrentEP, currentHandler.CurrentHandler)
+	http.HandleFunc(constants.StatusEP, statusHandler.StatusHandler)
+	http.HandleFunc(constants.HistoryEP, historicalHandler.HistoricalHandler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
