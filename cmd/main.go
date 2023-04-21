@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc(constants.DefaultEP, handlers.DefaultHandler)
 	http.HandleFunc(constants.CurrentEP, handlers.CurrentHandler)
 	http.HandleFunc(constants.StatusEP, handlers.StatusHandler)
+	http.HandleFunc(constants.HistoryEP, handlers.HistoricalHandler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
