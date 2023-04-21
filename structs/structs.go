@@ -23,6 +23,13 @@ type Status struct {
 	Uptime         string `json:"uptime"`
 }
 
+type Renewables struct {
+	Entity     string
+	Code       string
+	Year       int
+	Renewables float64
+}
+
 // ################################################## Webhook structs ##################################################
 
 type RegisteredWebHook struct {

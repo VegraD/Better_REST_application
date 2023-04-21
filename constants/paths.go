@@ -35,6 +35,9 @@ const (
 	// CountryFullText is the query parameter to limit country results to full text matches.
 	CountryFullText = "?fullText=true"
 
+	// CountryFullTextName is the query parameter to search for country based on full text name.
+	CountryFullTextName = "/name/"
+
 	// CountryAlpha it the subdirectory to search for country based on alpha code
 	CountryAlpha = "/alpha/"
 
