@@ -7,6 +7,7 @@ package main
 import (
 	"assignment-2/constants"
 	"assignment-2/handlers"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,12 +20,13 @@ func main() {
 
 	// Set port to default if it has not been set
 	if port == "" {
+		fmt.Println()
 		log.Println("$PORT has not been set. Default: " + constants.DefaultPort + " will be used.")
 		port = constants.DefaultPort
 	}
 
 	// Register handlers
-	http.HandleFunc("/", handlers.DefaultHandler)
+	http.HandleFunc(constants.DefaultEP, handlers.DefaultHandler)
 	http.HandleFunc(constants.CurrentEP, handlers.CurrentHandler)
 	http.HandleFunc(constants.StatusEP, handlers.StatusHandler)
 
