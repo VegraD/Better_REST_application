@@ -15,16 +15,16 @@ const (
 	DefaultEP string = "/"
 
 	// CurrentEP is the endpoint path for retrieving current renewable energy production.
-	CurrentEP string = renewablesEP + "/current/"
+	CurrentEP = baseEP + "/renewables/current"
 
 	// HistoryEP is the endpoint path for retrieving historical renewable energy production.
-	HistoryEP string = renewablesEP + "/history/"
+	HistoryEP = baseEP + "/history"
 
 	// NotificationsEP is the endpoint path for retrieving notifications.
-	NotificationsEP string = baseEP + "/notifications/"
+	NotificationsEP = baseEP + "/notifications"
 
 	// StatusEP is the endpoint path for retrieving the status of the application.
-	StatusEP string = baseEP + "/status/"
+	StatusEP = baseEP + "/status/"
 )
 
 // External API paths
@@ -32,7 +32,7 @@ const (
 	// CountryApi is the endpoint path for retrieving country information.
 	CountryApi = "http://129.241.150.113:8080/v3.1"
 
-	// coutryFullText is the query paramter to limit country results to full text matches.
+	// CountryFullText is the query parameter to limit country results to full text matches.
 	CountryFullText = "?fullText=true"
 
 	// CountryAlpha it the subdirectory to search for country based on alpha code
@@ -46,6 +46,6 @@ const (
 
 // Base endpoint paths
 const (
-	baseEP       string = "/energy/v1"
-	renewablesEP string = baseEP + "/renewables"
+	// baseEP is the base path for all endpoints.
+	baseEP string = "/energy/v1"
 )
