@@ -18,7 +18,7 @@ const (
 	CurrentEP = baseEP + "/renewables/current"
 
 	// HistoryEP is the endpoint path for retrieving historical renewable energy production.
-	HistoryEP = baseEP + "/history"
+	HistoryEP = baseEP + "/renewables/history"
 
 	// NotificationsEP is the endpoint path for retrieving notifications.
 	NotificationsEP = baseEP + "/notifications"
