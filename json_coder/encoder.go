@@ -13,6 +13,9 @@ Using an interface so that no extra method is needed.
 */
 func PrettyPrint(w http.ResponseWriter, in interface{}) {
 
+	// Set content type to json
+	w.Header().Set("Content-Type", "application/json")
+
 	output, err := json.MarshalIndent(in, "", "  ")
 	if err != nil {
 		log.Println("Error during pretty printing of output: " + err.Error())
