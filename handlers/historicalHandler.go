@@ -2,27 +2,35 @@ package handlers
 
 import (
 	"assignment-2/constants"
+	"assignment-2/json_coder"
+	"assignment-2/structs"
+	"assignment-2/utils"
+	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
-	"time"
 )
 
 func HistoricalHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		getHistoricalData(r)
+		getHistoricalData(w, r)
 	} else {
 		http.Error(w, r.Method+" not supported, use "+http.MethodGet+"!", http.StatusMethodNotAllowed)
 		return
 	}
 }
 
-func getHistoricalData(r *http.Request) {
-	switch url.QueryEscape(r.URL.Path) {
+func getHistoricalData(w http.ResponseWriter, r *http.Request) {
+
+	// Get the path
+	path := r.URL.Path
+
+	switch path {
 	case constants.HistoryEP:
-		// Find information for all countries
-	case constants.HistoryEP + "/{country?}":
-		// Find information on a specific country
+		allCountries(w, r)
+	case constants.HistoryEP + "/?country={country?}":
+		// Send a test response, just a string
+		fmt.Fprintf(w, "You requested data for a specific country")
+		specifiedCountry(w, r)
 	case constants.HistoryEP + "/{country?}" + "{?begin=year&end=year?}":
 		// Find information on a specific country and a specific time period
 	case constants.HistoryEP + "/{country?}" + "{?begin=year&end=year?}" + "{?sortByValue=bool?}":
@@ -32,39 +40,159 @@ func getHistoricalData(r *http.Request) {
 	}
 }
 
-// Validates the country query parameter.
-func validateCountryCode(country string) bool {
-	// TODO: Check if country is a valid country code and not just 3 random letters.
-	if len(country) != 3 {
-		return false
+func specifiedCountry(w http.ResponseWriter, r *http.Request) {
+	// example request: /energy/v1/renewables/history/nor
+	// example request: /energy/v1/renewables/history/nor?country=nor
+	/*
+		Example response:
+		[
+		    {
+		        "name": "Norway",
+		        "isoCode": "NOR",
+		        "year": "1965",
+		        "percentage": 67.87996
+		    },
+		    {
+		        "name": "Norway",
+		        "isoCode": "NOR",
+		        "year": "1966",
+		        "percentage": 65.3991
+		    },
+		    ...
+					    {
+		        "name": "Norway",
+		        "isoCode": "NOR",
+		        "year": "2023",     <- Present year
+		        "percentage": 65.3991
+		    },
+		]
+
+	*/
+
+	// Get the country query parameter
+	country := r.URL.Query().Get("country")
+	if country == "" {
+		http.Error(w, "Missing country query parameter", http.StatusBadRequest)
+		return
 	}
-	return true
+
+	// Get the csv
+	csv, err := utils.ReadCsv(constants.HistoricalCsv)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Parse the csv
+	countries, err := parseCountriesCsv(csv)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Find the country matching the query parameter and put all the years in a slice
+	var years []structs.CountryInfo
+	for _, c := range countries.Countries {
+		if c.IsoCode == country {
+			years = append(years, c)
+		}
+	}
+
+	// Write the response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json_coder.PrettyPrint(w, years)
+
 }
 
-// Validates begin and end query parameters. Year must be 4 digits and begin must be before end, and neither can not be
-// in the future.
-func validateBeginAndEnd(begin string, end string) bool {
-	currentYear := time.Now().Year()
+func allCountries(w http.ResponseWriter, r *http.Request) {
 
-	beginQueryAsInt, err := strconv.Atoi(begin)
-	if err != nil {
-		return false
+	// If there are no country query parameters, the mean of each country is returned.
+	// Example request: /energy/v1/renewables/history/ (no query parameters)
+	if r.URL.Query().Get("country") == "" {
+		// Get all countries
+		csv, err := utils.ReadCsv(constants.HistoricalCsv)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		countries, err := parseCountriesCsv(csv)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Compute the mean
+		countries = computeMean(countries)
+
+		// Write the response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json_coder.PrettyPrint(w, countries)
 	}
 
-	endQueryAsInt, err := strconv.Atoi(end)
-	if err != nil {
-		return false
+}
+
+func computeMean(countries structs.Countries) structs.Countries {
+	// Map the iso codes to a slice of percentages. Using map to avoid duplicates and for faster lookup, but the
+	// order of the countries will be lost and likely be different for each request.
+	isoCodeMap := make(map[string][]float32)
+	for _, country := range countries.Countries {
+		isoCodeMap[country.IsoCode] = append(isoCodeMap[country.IsoCode], country.Percentage)
 	}
 
-	if len(begin) < 4 || len(end) < 4 || endQueryAsInt > currentYear || beginQueryAsInt > currentYear {
-		return false
+	// Create a new slice of countries with the mean
+	var newCountries structs.Countries
+	for isoCode, percentages := range isoCodeMap {
+		mean := 0.0
+		for _, percentage := range percentages {
+			mean += float64(percentage)
+		}
+		mean /= float64(len(percentages))
+
+		// Find the country with the iso code and set the percentage to the mean
+		for _, country := range countries.Countries {
+			if country.IsoCode == isoCode {
+				country.Percentage = float32(mean)
+				country.Year = 0 // Set Year field to 0, so it's omitted in the response.
+				newCountries.Countries = append(newCountries.Countries, country)
+				break
+			}
+		}
 	}
 
-	if beginQueryAsInt > endQueryAsInt {
-		temp := beginQueryAsInt
-		beginQueryAsInt = endQueryAsInt
-		endQueryAsInt = temp
+	return newCountries
+}
+
+func parseCountriesCsv(records [][]string) (structs.Countries, error) {
+	var countries structs.Countries
+
+	// Iterate through the records and populate the Countries struct
+	for _, record := range records {
+		// Skip the header row
+		if record[0] == "Entity" {
+			continue
+		}
+
+		y, err := strconv.Atoi(record[2])
+		if err != nil {
+			return countries, fmt.Errorf("error parsing year: %s", err)
+		}
+
+		p, err := strconv.ParseFloat(record[3], 32)
+		if err != nil {
+			return countries, fmt.Errorf("error parsing percentage: %s", err)
+		}
+
+		countryInfo := structs.CountryInfo{
+			Country:    record[0],
+			IsoCode:    record[1],
+			Year:       y,
+			Percentage: float32(p),
+		}
+		countries.Countries = append(countries.Countries, countryInfo)
 	}
 
-	return true
+	return countries, nil
 }
