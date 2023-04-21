@@ -1,4 +1,4 @@
-package handlers
+package statusHandler
 
 import (
 	"assignment-2/constants"

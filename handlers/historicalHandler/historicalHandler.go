@@ -1,4 +1,4 @@
-package handlers
+package historicalHandler
 
 import (
 	"assignment-2/constants"

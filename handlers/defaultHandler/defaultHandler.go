@@ -1,4 +1,4 @@
-package handlers
+package defaultHandler
 
 import (
 	"assignment-2/constants"
