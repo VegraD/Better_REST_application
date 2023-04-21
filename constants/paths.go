@@ -15,13 +15,13 @@ const (
 	DefaultEP string = "/"
 
 	// CurrentEP is the endpoint path for retrieving current renewable energy production.
-	CurrentEP = baseEP + "/renewables/current"
+	CurrentEP = baseEP + "/renewables/current/"
 
 	// HistoryEP is the endpoint path for retrieving historical renewable energy production.
-	HistoryEP = baseEP + "/renewables/history"
+	HistoryEP = baseEP + "/renewables/history/"
 
 	// NotificationsEP is the endpoint path for retrieving notifications.
-	NotificationsEP = baseEP + "/notifications"
+	NotificationsEP = baseEP + "/notifications/"
 
 	// StatusEP is the endpoint path for retrieving the status of the application.
 	StatusEP = baseEP + "/status/"
@@ -40,9 +40,6 @@ const (
 
 	// CountryAlpha it the subdirectory to search for country based on alpha code
 	CountryAlpha = "/alpha/"
-
-	// RenewablesApi is the endpoint path for retrieving renewable energy production information.
-	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
 )
 
 // ################################# Unexported constants below this line #################################
