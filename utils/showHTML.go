@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"assignment-2/constants"
 	"io"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ func DisplayHTML(w http.ResponseWriter, filePath string) {
 	// Set content type to html
 	w.Header().Set("Content-Type", "text/html")
 
+	// TODO: Put the opening into a separate function in the /utils/fileHandler.go file?
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -25,14 +25,10 @@ func DisplayHTML(w http.ResponseWriter, filePath string) {
 		return
 	}
 
-	// Close the file when the function returns
-	defer func() {
-		err := file.Close()
-		if err != nil {
-			log.Printf(constants.CloseFileFail+"%s", err)
-		}
-	}()
+	// Wrapper for closing the file
+	defer CloseFile(file)
 
+	// TODO: Put the copying into a separate function in the /utils/fileHandler.go file?
 	// Copy file contents to response writer
 	_, err = io.Copy(w, file)
 	if err != nil {
