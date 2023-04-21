@@ -2,6 +2,8 @@ package currentHandler
 
 import (
 	"assignment-2/constants"
+	"assignment-2/json_coder"
+	"fmt"
 	"net/http"
 	"path"
 )
@@ -33,7 +35,16 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		//Find information for country
-		buildCountryUrl(pathBase)
+		url := buildCountryUrl(pathBase)
+
+		country, err := http.Get(url)
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+
+		// decode the information about the countries from the country api
+		var countryApi = json_coder.DecodeCountryInfo(country)
+		json_coder.PrettyPrint(w, countryApi)
 	}
 }
 
@@ -56,6 +67,6 @@ func buildCountryUrl(country string) string {
 	if len(country) == 3 {
 		return constants.CountryApi + constants.CountryAlpha + country
 	} else {
-		return constants.CountryApi + constants.CountryFullText + country
+		return constants.CountryApi + constants.CountryFullTextName + country + constants.CountryFullText
 	}
 }
