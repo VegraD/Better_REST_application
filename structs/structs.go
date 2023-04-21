@@ -5,8 +5,13 @@ package structs
 type CountryInfo struct {
 	Country    string  `json:"name"`
 	IsoCode    string  `json:"isoCode"`
-	Year       int     `json:"year"`
+	Year       int     `json:"year,omitempty"`
 	Percentage float32 `json:"percentage"`
+}
+
+// Countries is a struct that contains a slice of CountryInfo structs.
+type Countries struct {
+	Countries []CountryInfo
 }
 
 type Status struct {
