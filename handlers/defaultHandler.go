@@ -10,7 +10,7 @@ import (
 func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Temporary! Find a better way.
-	if r.URL.Path != "/" {
+	if r.URL.Path != constants.DefaultEP {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
