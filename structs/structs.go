@@ -30,6 +30,13 @@ type Renewables struct {
 	Renewables float64
 }
 
+type URLParams struct {
+	Country     string
+	BeginYear   string
+	EndYear     string
+	SortByValue bool
+}
+
 // ################################################## Webhook structs ##################################################
 
 type RegisteredWebHook struct {
