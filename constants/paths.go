@@ -40,6 +40,9 @@ const (
 
 	// CountryAlpha it the subdirectory to search for country based on alpha code
 	CountryAlpha = "/alpha/"
+
+	// RenewablesApi is the endpoint path for retrieving renewable energy production.
+	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
 )
 
 // ################################# Unexported constants below this line #################################

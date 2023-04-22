@@ -31,8 +31,8 @@ func main() {
 	// Register handlers
 	http.HandleFunc(constants.DefaultEP, defaultHandler.DefaultHandler)
 	http.HandleFunc(constants.CurrentEP, currentHandler.CurrentHandler)
-	http.HandleFunc(constants.StatusEP, statusHandler.StatusHandler)
 	http.HandleFunc(constants.HistoryEP, historicalHandler.HistoricalHandler)
+	http.HandleFunc(constants.StatusEP, statusHandler.StatusHandler)
 
 	// Start http server
 	log.Println("Starting server on port " + port + " ...")
