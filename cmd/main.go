@@ -24,7 +24,7 @@ func main() {
 	// Set port to default if it has not been set
 	if port == "" {
 		fmt.Println()
-		log.Println("$PORT has not been set. Default: " + constants.DefaultPort + " will be used.")
+		log.Println("$PORT has not been set. Default port: " + constants.DefaultPort + " will be used.")
 		port = constants.DefaultPort
 	}
 
