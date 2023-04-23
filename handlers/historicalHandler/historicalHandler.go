@@ -4,6 +4,7 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"fmt"
 	"net/http"
 	"sort"
 	"strconv"
@@ -36,6 +37,7 @@ func getHistoricalData(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// getSpecifiedCountry returns the historical data for the specified country.
 func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 	// Get all countries from csv file
 	countries, err := utils.GetCountriesFromCsv()
@@ -44,31 +46,14 @@ func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 		return
 	}
 
-	// Convert beginYear and endYear to int
-	beginYear, endYear, done := convertYearToInt(w, params, err)
-	if done {
+	// Filter the countries by the parameters specified in the URL
+	countryData, err := filterCountriesByParams(countries.Countries, params)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Get the data for the specified country with the specified time period
-	var countryData []structs.CountryInfo
-	for _, c := range countries.Countries {
-		if c.IsoCode == params.Country {
-			if params.BeginYear != "" && c.Year < beginYear {
-				continue
-			}
-			if params.EndYear != "" && c.Year > endYear {
-				continue
-			}
-			countryData = append(countryData, structs.CountryInfo{
-				Country:    c.Country,
-				IsoCode:    c.IsoCode,
-				Year:       c.Year,
-				Percentage: c.Percentage,
-			})
-		}
-	}
-
+	// No countries with the specified parameters were found
 	if len(countryData) == 0 {
 		http.Error(w, "Country not found", http.StatusNotFound)
 		return
@@ -76,7 +61,7 @@ func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 
 	// Sort the data by percentage of renewable energy production
 	countriesToSort := structs.Countries{Countries: countryData}
-	sortByValue(params, countriesToSort)
+	sortByValue(params.SortByValue, countriesToSort)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -95,28 +80,21 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 		return
 	}
 
-	// Convert beginYear and endYear to int
-	beginYear, endYear, done := convertYearToInt(w, params, err)
-	if done {
+	// Filter the data by the specified year range
+	filteredCountriesSlice, err := filterCountriesByParams(countries.Countries, params)
+	if err != nil {
+		// Handle the error
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// Convert from CountryInfo slice to Countries struct
+	filteredCountries := structs.Countries{Countries: filteredCountriesSlice}
 
-	// Filter the data by the specified year range
-	var filteredCountries structs.Countries
-	for _, c := range countries.Countries {
-		if params.BeginYear != "" && c.Year < beginYear {
-			continue
-		}
-		if params.EndYear != "" && c.Year > endYear {
-			continue
-		}
-		filteredCountries.Countries = append(filteredCountries.Countries, c)
-	}
-
+	// Compute the mean for each country
 	countries = computeMean(filteredCountries)
 
 	// Sort the data
-	sortByValue(params, countries)
+	sortByValue(params.SortByValue, countries)
 
 	// Write the response
 	w.Header().Set("Content-Type", "application/json")
@@ -124,31 +102,57 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	json_coder.PrettyPrint(w, countries.Countries)
 }
 
-func convertYearToInt(w http.ResponseWriter, params structs.URLParams, err error) (int, int, bool) {
+// filterCountriesByParams only returns the countries that match the parameters specified in the URL.
+func filterCountriesByParams(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+	beginYear, endYear, err := convertYearToInt(params)
+	if err != nil {
+		return nil, err
+	}
+
+	var filteredCountries []structs.CountryInfo
+	for _, c := range countries {
+		if params.Country != "" && c.IsoCode != params.Country {
+			continue
+		}
+		if beginYear == -1 && endYear == -1 {
+			if len(filteredCountries) > 0 && filteredCountries[0].Year >= c.Year {
+				continue
+			}
+			filteredCountries = filteredCountries[:0]
+		} else if (beginYear != 0 && c.Year < beginYear) || (endYear != 0 && c.Year > endYear) {
+			continue
+		}
+		filteredCountries = append(filteredCountries, c)
+	}
+	return filteredCountries, nil
+}
+
+// convertYearToInt converts the beginYear and endYear parameters from the URL to int.
+func convertYearToInt(params structs.URLParams) (int, int, error) {
 	// Convert beginYear and endYear to int
 	var beginYear int
 	if params.BeginYear != "" {
+		var err error
 		beginYear, err = strconv.Atoi(params.BeginYear)
 		if err != nil {
-			http.Error(w, "Invalid begin year", http.StatusBadRequest)
-			return 0, 0, true
+			return 0, 0, fmt.Errorf("invalid begin year")
 		}
 	}
 	var endYear int
 	if params.EndYear != "" {
+		var err error
 		endYear, err = strconv.Atoi(params.EndYear)
 		if err != nil {
-			http.Error(w, "Invalid end year", http.StatusBadRequest)
-			return 0, 0, true
+			return 0, 0, fmt.Errorf("invalid end year")
 		}
 	}
-	return beginYear, endYear, false
+	return beginYear, endYear, nil
 }
 
 // sortByValue sorts the countries slice by percentage of renewable energy if the sort parameter from the URL is set to
 // true. The countries will be sorted in ascending order.
-func sortByValue(params structs.URLParams, countries structs.Countries) {
-	if params.SortByValue {
+func sortByValue(sbv bool, countries structs.Countries) {
+	if sbv {
 		sort.Slice(countries.Countries, func(i, j int) bool {
 			return countries.Countries[i].Percentage < countries.Countries[j].Percentage
 		})
