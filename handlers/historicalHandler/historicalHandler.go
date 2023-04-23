@@ -45,21 +45,9 @@ func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 	}
 
 	// Convert beginYear and endYear to int
-	var beginYear int
-	if params.BeginYear != "" {
-		beginYear, err = strconv.Atoi(params.BeginYear)
-		if err != nil {
-			http.Error(w, "Invalid begin year", http.StatusBadRequest)
-			return
-		}
-	}
-	var endYear int
-	if params.EndYear != "" {
-		endYear, err = strconv.Atoi(params.EndYear)
-		if err != nil {
-			http.Error(w, "Invalid end year", http.StatusBadRequest)
-			return
-		}
+	beginYear, endYear, done := convertYearToInt(w, params, err)
+	if done {
+		return
 	}
 
 	// Get the data for the specified country with the specified time period
@@ -108,21 +96,9 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	}
 
 	// Convert beginYear and endYear to int
-	var beginYear int
-	if params.BeginYear != "" {
-		beginYear, err = strconv.Atoi(params.BeginYear)
-		if err != nil {
-			http.Error(w, "Invalid begin year", http.StatusBadRequest)
-			return
-		}
-	}
-	var endYear int
-	if params.EndYear != "" {
-		endYear, err = strconv.Atoi(params.EndYear)
-		if err != nil {
-			http.Error(w, "Invalid end year", http.StatusBadRequest)
-			return
-		}
+	beginYear, endYear, done := convertYearToInt(w, params, err)
+	if done {
+		return
 	}
 
 	// Filter the data by the specified year range
@@ -146,6 +122,27 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json_coder.PrettyPrint(w, countries.Countries)
+}
+
+func convertYearToInt(w http.ResponseWriter, params structs.URLParams, err error) (int, int, bool) {
+	// Convert beginYear and endYear to int
+	var beginYear int
+	if params.BeginYear != "" {
+		beginYear, err = strconv.Atoi(params.BeginYear)
+		if err != nil {
+			http.Error(w, "Invalid begin year", http.StatusBadRequest)
+			return 0, 0, true
+		}
+	}
+	var endYear int
+	if params.EndYear != "" {
+		endYear, err = strconv.Atoi(params.EndYear)
+		if err != nil {
+			http.Error(w, "Invalid end year", http.StatusBadRequest)
+			return 0, 0, true
+		}
+	}
+	return beginYear, endYear, false
 }
 
 // sortByValue sorts the countries slice by percentage of renewable energy if the sort parameter from the URL is set to
