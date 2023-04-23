@@ -5,6 +5,7 @@ import (
 	"assignment-2/structs"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -58,6 +59,7 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	// Extract the query parameters from the URL and set the struct fields
 	queryParams := r.URL.Query()
 
+	// Set the params struct fields
 	country := queryParams.Get("country")
 	if country != "" {
 		params.Country = strings.ToUpper(country)
@@ -76,5 +78,22 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	sortByValue := queryParams.Get("sortByValue") == "true"
 	params.SortByValue = sortByValue
 
+	// Correct the order of the years if beginYear > endYear
+	params = correctYearOrder(params)
+
 	return params, nil
+}
+
+// correctYearOrder corrects the order of the years if beginYear > endYear
+func correctYearOrder(params structs.URLParams) structs.URLParams {
+	if params.BeginYear != "" && params.EndYear != "" {
+		begin, err1 := strconv.Atoi(params.BeginYear)
+		end, err2 := strconv.Atoi(params.EndYear)
+		if err1 == nil && err2 == nil && begin > end || end < begin {
+			temp := params.BeginYear
+			params.BeginYear = params.EndYear
+			params.EndYear = temp
+		}
+	}
+	return params
 }
