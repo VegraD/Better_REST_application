@@ -3,7 +3,6 @@ package utils
 import (
 	"assignment-2/constants"
 	"assignment-2/structs"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -13,6 +12,9 @@ import (
 // the URL path or in the query parameters. For example:
 // http://localhost:8080/history/NOR/1965/1999/true or
 // http://localhost:8080/history?country=NOR&begin=1965&end=1999&sortByValue=true
+// If using the path format, the parameters must be in the following order: country, begin, end, sortByValue,
+// and if only either begin or end is specified, the other must be specified as "null".
+// like so: http://localhost:8080/history/NOR/1970/null/true
 func convertPathToQueryParams(r *http.Request) {
 	// Parse the request's URL into a *url.URL struct
 	u, err := url.Parse(r.URL.String())
@@ -29,10 +31,10 @@ func convertPathToQueryParams(r *http.Request) {
 	if len(pathParts) > 0 && pathParts[0] != "" {
 		queryParams.Set("country", pathParts[0])
 	}
-	if len(pathParts) > 1 && pathParts[1] != "" {
+	if len(pathParts) > 1 && pathParts[1] != "" && pathParts[1] != "null" {
 		queryParams.Set("begin", pathParts[1])
 	}
-	if len(pathParts) > 2 && pathParts[2] != "" {
+	if len(pathParts) > 2 && pathParts[2] != "" && pathParts[2] != "null" {
 		queryParams.Set("end", pathParts[2])
 	}
 	if len(pathParts) > 3 && pathParts[3] != "" {
@@ -49,9 +51,6 @@ func convertPathToQueryParams(r *http.Request) {
 // is converted into query parameters and then the query parameters are extracted.
 func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	params := structs.URLParams{}
-
-	// TODO: This is for debugging, remove it later
-	fmt.Println("URL: ", r.URL.String())
 
 	// Convert the URL path into query parameters
 	convertPathToQueryParams(r)
