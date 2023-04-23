@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-// convertPathToQueryParams converts the URL path into query parameters. Now a user can either enter the parameters in
+// pathToQueryHistParams converts the URL path into query parameters. Now a user can either enter the parameters in
 // the URL path or in the query parameters. For example:
 // http://localhost:8080/history/NOR/1965/1999/true or
 // http://localhost:8080/history?country=NOR&begin=1965&end=1999&sortByValue=true
 // If using the path format, the parameters must be in the following order: country, begin, end, sortByValue,
 // and if only either begin or end is specified, the other must be specified as "null".
 // like so: http://localhost:8080/history/NOR/1970/null/true
-func convertPathToQueryParams(r *http.Request) {
+func pathToQueryHistParams(r *http.Request) {
 	// Parse the request's URL into a *url.URL struct
 	u, err := url.Parse(r.URL.String())
 	if err != nil {
@@ -53,7 +53,7 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	params := structs.URLParams{}
 
 	// Convert the URL path into query parameters
-	convertPathToQueryParams(r)
+	pathToQueryHistParams(r)
 
 	// Extract the query parameters from the URL and set the struct fields
 	queryParams := r.URL.Query()
