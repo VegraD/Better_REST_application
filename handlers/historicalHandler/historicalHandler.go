@@ -1,85 +1,77 @@
 package historicalHandler
 
 import (
-	"assignment-2/constants"
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
-	"fmt"
-	"log"
 	"net/http"
 	"sort"
 	"strconv"
 )
 
 // HistoricalHandler is the handler to get historical information about the countries renewable energy production.
-// For now, it uses if statements to determine what data to get. Can be changed to a switch if needed for expansion.
 func HistoricalHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
+	switch r.Method {
+	case http.MethodGet:
 		getHistoricalData(w, r)
-	} else {
+	default:
 		http.Error(w, r.Method+" not supported, use "+http.MethodGet+"!", http.StatusMethodNotAllowed)
-		return
 	}
 }
 
-// getHistoricalData is the function that handles the get request for the historical data.
+// getHistoricalData gets the historical data from the csv file and returns it to the user.
 func getHistoricalData(w http.ResponseWriter, r *http.Request) {
-	// Gets the historical data parameters from either the URL path or the query parameters as a struct.
 	params, err := utils.GetHistoricalDataParams(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Switch for what data to get.
-	switch {
-	case params.Country == "": // No country specified
-		switch {
-		case params.BeginYear == "" && params.EndYear == "": // No time period specified
-			allCountries(w, params) // Get all countries, only shows mean percentage
-		case params.BeginYear != "" && params.EndYear != "": // {?begin=year&end=year?} only mean percentage value per country
-			log.Println("The mean energy percentage for each country in the period between beginYear and endYear")
-		case params.BeginYear != "" && params.EndYear == "": // {?begin=year}
-			log.Println("Every year from beginYear to the most recent year")
-		case params.BeginYear == "" && params.EndYear != "": // {?end=year}
-			log.Println("Every year from the earliest year to endYear")
-		}
-
-	case params.Country != "": // Specified country
-		switch {
-		case params.BeginYear == "" && params.EndYear == "": // All years for specified country
-			getSpecifiedCountry(w, params)
-		case params.BeginYear != "" && params.EndYear != "": // {country?begin=year&end=year?}
-			log.Println("Same as getSpecifiedCountry but only entries between beginYear and endYear")
-		case params.BeginYear != "" && params.EndYear == "": // {country?begin=year}
-			log.Println("Same as getSpecifiedCountry but only entries from beginYear to the most recent year")
-		case params.BeginYear == "" && params.EndYear != "": // {country?end=year}
-			log.Println("Same as getSpecifiedCountry but only entries from the earliest year to endYear")
-		}
+	// If no country is specified, return data for all countries, else return data for specified country
+	if params.Country == "" {
+		getAllCountries(w, params)
+	} else {
+		getSpecifiedCountry(w, params)
 	}
+
 }
 
 func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
-
-	// Get the country data from the csv file
-	csv, err := utils.ReadCsv(constants.HistoricalCsv)
+	// Get all countries from csv file
+	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Parse the csv file
-	countries, err := parseCountriesCsv(csv)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	// Convert beginYear and endYear to int
+	var beginYear int
+	if params.BeginYear != "" {
+		beginYear, err = strconv.Atoi(params.BeginYear)
+		if err != nil {
+			http.Error(w, "Invalid begin year", http.StatusBadRequest)
+			return
+		}
+	}
+	var endYear int
+	if params.EndYear != "" {
+		endYear, err = strconv.Atoi(params.EndYear)
+		if err != nil {
+			http.Error(w, "Invalid end year", http.StatusBadRequest)
+			return
+		}
 	}
 
-	// Find all the data for the specified country from the countries slice of countryInfo structs
+	// Get the data for the specified country with the specified time period
 	var countryData []structs.CountryInfo
 	for _, c := range countries.Countries {
 		if c.IsoCode == params.Country {
+			if params.BeginYear != "" && c.Year < beginYear {
+				continue
+			}
+			if params.EndYear != "" && c.Year > endYear {
+				continue
+			}
 			countryData = append(countryData, structs.CountryInfo{
 				Country:    c.Country,
 				IsoCode:    c.IsoCode,
@@ -89,55 +81,81 @@ func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 		}
 	}
 
-	// If no data was found for the specified country, return an error
 	if len(countryData) == 0 {
 		http.Error(w, "Country not found", http.StatusNotFound)
 		return
 	}
 
-	// Sort the data by percentage value if the sort parameter is set to true
-	if params.SortByValue {
-		sort.Slice(countryData, func(i, j int) bool {
-			return countryData[i].Percentage < countryData[j].Percentage
-		})
-	}
+	// Sort the data by percentage of renewable energy production
+	countriesToSort := structs.Countries{Countries: countryData}
+	sortByValue(params, countriesToSort)
 
-	// Write the response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json_coder.PrettyPrint(w, countryData)
 }
 
-// allCountries returns all the countries in the csv file. It's used when no country is specified in the URL.
-func allCountries(w http.ResponseWriter, params structs.URLParams) {
-	// Get the data from the csv file
-	csv, err := utils.ReadCsv(constants.HistoricalCsv)
+// getAllCountries returns all the countries in the csv file. It's used when no country is specified in the URL.
+func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
+
+	// TODO: Evaluate the http status codes in this function.
+
+	// Get the countries from the csv file
+	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Parse the csv file
-	countries, err := parseCountriesCsv(csv)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	// Convert beginYear and endYear to int
+	var beginYear int
+	if params.BeginYear != "" {
+		beginYear, err = strconv.Atoi(params.BeginYear)
+		if err != nil {
+			http.Error(w, "Invalid begin year", http.StatusBadRequest)
+			return
+		}
+	}
+	var endYear int
+	if params.EndYear != "" {
+		endYear, err = strconv.Atoi(params.EndYear)
+		if err != nil {
+			http.Error(w, "Invalid end year", http.StatusBadRequest)
+			return
+		}
 	}
 
-	// Compute the mean of the percentages for each country
-	countries = computeMean(countries)
-
-	// Sort the data by percentage value if the sort parameter is set to true
-	if params.SortByValue {
-		sort.Slice(countries.Countries, func(i, j int) bool {
-			return countries.Countries[i].Percentage < countries.Countries[j].Percentage
-		})
+	// Filter the data by the specified year range
+	var filteredCountries structs.Countries
+	for _, c := range countries.Countries {
+		if params.BeginYear != "" && c.Year < beginYear {
+			continue
+		}
+		if params.EndYear != "" && c.Year > endYear {
+			continue
+		}
+		filteredCountries.Countries = append(filteredCountries.Countries, c)
 	}
+
+	countries = computeMean(filteredCountries)
+
+	// Sort the data
+	sortByValue(params, countries)
 
 	// Write the response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json_coder.PrettyPrint(w, countries.Countries)
+}
+
+// sortByValue sorts the countries slice by percentage of renewable energy if the sort parameter from the URL is set to
+// true. The countries will be sorted in ascending order.
+func sortByValue(params structs.URLParams, countries structs.Countries) {
+	if params.SortByValue {
+		sort.Slice(countries.Countries, func(i, j int) bool {
+			return countries.Countries[i].Percentage < countries.Countries[j].Percentage
+		})
+	}
 }
 
 // computeMean computes the mean of the percentages for each country and returns a new slice of countries with the mean.
@@ -159,7 +177,7 @@ func computeMean(countries structs.Countries) structs.Countries {
 		}
 		mean /= float64(len(percentages))
 
-		// TODO: find a better way to omit the year field in the json response.
+		// TODO: better way to omit the year field in the json response?
 		// Find the country with the iso code and set the percentage to the mean
 		for _, country := range countries.Countries {
 			if country.IsoCode == isoCode {
@@ -172,38 +190,4 @@ func computeMean(countries structs.Countries) structs.Countries {
 	}
 
 	return newCountries
-}
-
-// parseCountriesCsv parses the csv file and returns a slice of countryInfo structs.
-func parseCountriesCsv(records [][]string) (structs.Countries, error) {
-	var countries structs.Countries
-
-	// Iterate through the records and populate the Countries struct
-	for _, record := range records {
-		// TODO: Are there better ways to handle the header row?
-		// Skip the header row
-		if record[0] == "Entity" {
-			continue
-		}
-
-		y, err := strconv.Atoi(record[2])
-		if err != nil {
-			return countries, fmt.Errorf("error parsing year: %s", err)
-		}
-
-		p, err := strconv.ParseFloat(record[3], 32)
-		if err != nil {
-			return countries, fmt.Errorf("error parsing percentage: %s", err)
-		}
-
-		countryInfo := structs.CountryInfo{
-			Country:    record[0],
-			IsoCode:    record[1],
-			Year:       y,
-			Percentage: float32(p),
-		}
-		countries.Countries = append(countries.Countries, countryInfo)
-	}
-
-	return countries, nil
 }
