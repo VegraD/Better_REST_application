@@ -11,9 +11,7 @@ import (
 	"path"
 )
 
-/*
-RenewablesCurrentHandler is the handler to get current information about countries renewable energy
-*/
+// CurrentHandler is the handler to get current information about countries renewable energy
 func CurrentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
@@ -25,9 +23,7 @@ func CurrentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/*
-handleRenewablesCurrentGetRequest handles the get request for the current renewable energy information
-*/
+// handleRenewablesCurrentGetRequest handles the get request for the current renewable energy information
 func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	//url := url.parse(r.URL.String())
 	pathBase := path.Base(r.URL.Path)
@@ -42,6 +38,7 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// findSingleCountryInformation finds the information about a single country
 func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
 	url := buildCountryUrl(pathBase)
 
@@ -59,13 +56,11 @@ func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
 	if err != nil {
 		fmt.Print(err.Error())
 	}
-	GetCountryreneables(csvData, pathBase)
+	GetCountryRenewables(csvData, pathBase)
 
 }
 
-/*
-getCountryInformation gets the information about the country
-*/
+// buildCountryUrl builds the url for the country api
 func buildCountryUrl(country string) string {
 	// checks if the country is three letters
 	if len(country) == 3 {
@@ -75,9 +70,7 @@ func buildCountryUrl(country string) string {
 	}
 }
 
-/*
-FetchCsvData fetches the csv data from the url
-*/
+// FetchCsvData fetches the csv data from the url
 func FetchCsvData() *http.Response {
 	url := constants.RenewablesApi
 	// get the information from the apis
@@ -90,9 +83,7 @@ func FetchCsvData() *http.Response {
 	return csvDataResp
 }
 
-/*
-DecodeCsvData decodes the csv data
-*/
+// DecodeCsvData decodes the csv data
 func DecodeCsvData(csvDataResp *http.Response) ([]structs.Renewables, error) {
 	// decode the csv data
 
@@ -107,10 +98,8 @@ func DecodeCsvData(csvDataResp *http.Response) ([]structs.Renewables, error) {
 	return csvDataDecoded, nil
 }
 
-/*
-GetCountryreneables gets the latest renewable energy information for the specified country
-*/
-func GetCountryreneables(csvData []structs.Renewables, country string) (int, float64) {
+// GetCountryRenewables gets the latest renewable energy information for the specified country
+func GetCountryRenewables(csvData []structs.Renewables, country string) (int, float64) {
 	var latestYear int
 	var renewablePercantage float64
 
