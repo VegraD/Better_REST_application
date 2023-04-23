@@ -29,7 +29,7 @@ func getHistoricalData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If no country is specified, return data for all countries, else return data for specified country
-	if params.Country == "" {
+	if params.Country == "" || params.Country == "null" {
 		getAllCountries(w, params)
 	} else {
 		getSpecifiedCountry(w, params)
@@ -93,7 +93,12 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	// Compute the mean for each country
 	countries = computeMean(filteredCountries)
 
-	// Sort the data
+	// Sort in alphabetical order of country name
+	sort.Slice(countries.Countries, func(i, j int) bool {
+		return countries.Countries[i].Country < countries.Countries[j].Country
+	})
+
+	// Sort the data by percentage if sortByValue is true
 	sortByValue(params.SortByValue, countries)
 
 	// Write the response
@@ -104,6 +109,7 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 
 // filterCountriesByParams only returns the countries that match the parameters specified in the URL.
 func filterCountriesByParams(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+
 	beginYear, endYear, err := convertYearToInt(params)
 	if err != nil {
 		return nil, err
@@ -111,14 +117,14 @@ func filterCountriesByParams(countries []structs.CountryInfo, params structs.URL
 
 	var filteredCountries []structs.CountryInfo
 	for _, c := range countries {
-		if params.Country != "" && c.IsoCode != params.Country {
+		if params.Country != "" && params.Country != "null" && c.IsoCode != params.Country {
 			continue
 		}
-		if beginYear == -1 && endYear == -1 {
+		if beginYear == -1 && endYear == -1 { // If both beginYear and endYear are -1, return only the latest year
 			if len(filteredCountries) > 0 && filteredCountries[0].Year >= c.Year {
 				continue
 			}
-			filteredCountries = filteredCountries[:0]
+			filteredCountries = filteredCountries[:0] // Clear the slice
 		} else if (beginYear != 0 && c.Year < beginYear) || (endYear != 0 && c.Year > endYear) {
 			continue
 		}
