@@ -10,16 +10,16 @@ import (
 /*
 DecodeCountryInfo is a method that takes a http request and decodes the json body
 */
-func DecodeCountryInfo(httpResponse *http.Response) []structs.CountryInfo {
-	var country []structs.CountryInfo
+func DecodeCountryNeighbour(httpResponse *http.Response) []structs.Border {
+	var neighbours []structs.Border
 
 	// Create a new decoder
 	decoder := json.NewDecoder(httpResponse.Body)
 
 	// Decode the json body into the struct
-	if err := decoder.Decode(&country); err != nil {
+	if err := decoder.Decode(&neighbours); err != nil {
 		log.Print(err, http.StatusNoContent)
 	}
 
-	return country
+	return neighbours
 }

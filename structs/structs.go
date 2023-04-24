@@ -39,8 +39,7 @@ type URLParams struct {
 }
 
 type Border struct {
-	Landlocked bool     `json:"landlocked"`
-	Borders    []string `json:"borders"`
+	Borders []string `json:"borders"`
 }
 
 // ################################################## Webhook structs ##################################################
