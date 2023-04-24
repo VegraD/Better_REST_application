@@ -4,6 +4,7 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"errors"
 	"fmt"
 	"net/http"
 	"sort"
@@ -51,11 +52,8 @@ func getSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}
-
-	// No countries with the specified parameters were found
-	if len(countryData) == 0 {
-		http.Error(w, "Country not found", http.StatusNotFound)
+	} else if len(countryData) == 0 {
+		http.Error(w, "No countries with the specified parameters were found", http.StatusNotFound)
 		return
 	}
 
@@ -83,7 +81,7 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	// Filter the data by the specified year range
 	filteredCountriesSlice, err := filterCountriesByParams(countries.Countries, params)
 	if err != nil {
-		// Handle the error
+		// TODO: error handling.
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -107,9 +105,7 @@ func getAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	json_coder.PrettyPrint(w, countries.Countries)
 }
 
-// filterCountriesByParams only returns the countries that match the parameters specified in the URL.
 func filterCountriesByParams(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
-
 	beginYear, endYear, err := convertYearToInt(params)
 	if err != nil {
 		return nil, err
@@ -130,29 +126,47 @@ func filterCountriesByParams(countries []structs.CountryInfo, params structs.URL
 		}
 		filteredCountries = append(filteredCountries, c)
 	}
+
+	// If no data was found for the given year or year range, return an error
+	minYear, maxYear := findMinAndMaxYear(countries)
+	if len(filteredCountries) == 0 {
+		if (params.BeginYear != "" && params.BeginYear != "-1" && beginYear < minYear) ||
+			(params.EndYear != "" && params.EndYear != "-1" && endYear > maxYear) ||
+			(params.BeginYear != "" && params.BeginYear != "-1" && beginYear > maxYear) ||
+			(params.EndYear != "" && params.EndYear != "-1" && endYear < minYear) {
+			return nil, errors.New("no data found for the given year or range of years")
+		}
+	}
+
 	return filteredCountries, nil
 }
 
 // convertYearToInt converts the beginYear and endYear parameters from the URL to int.
 func convertYearToInt(params structs.URLParams) (int, int, error) {
-	// Convert beginYear and endYear to int
-	var beginYear int
+	var beginYear, endYear int
+	var err error
 	if params.BeginYear != "" {
-		var err error
 		beginYear, err = strconv.Atoi(params.BeginYear)
 		if err != nil {
 			return 0, 0, fmt.Errorf("invalid begin year")
 		}
 	}
-	var endYear int
 	if params.EndYear != "" {
-		var err error
 		endYear, err = strconv.Atoi(params.EndYear)
 		if err != nil {
 			return 0, 0, fmt.Errorf("invalid end year")
 		}
 	}
 	return beginYear, endYear, nil
+}
+
+// findMinAndMaxYear finds the minimum and maximum year in the dataset.
+func findMinAndMaxYear(countries []structs.CountryInfo) (int, int) {
+	// sort the countries by year, then return the first and last element
+	sort.Slice(countries, func(i, j int) bool {
+		return countries[i].Year < countries[j].Year
+	})
+	return countries[0].Year, countries[len(countries)-1].Year
 }
 
 // sortByValue sorts the countries slice by percentage of renewable energy if the sort parameter from the URL is set to
