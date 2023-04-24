@@ -88,7 +88,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
-
+	//TODO: implement
 }
 
 // TODO: error handling if input is empty
