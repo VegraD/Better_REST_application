@@ -7,6 +7,7 @@ package main
 import (
 	"assignment-2/constants"
 	"assignment-2/handlers/defaultHandler"
+	"assignment-2/handlers/notificationHandler"
 	"assignment-2/handlers/renewableHandlers/currentHandler"
 	"assignment-2/handlers/renewableHandlers/historicalHandler"
 	"assignment-2/handlers/statusHandler"
@@ -32,6 +33,7 @@ func main() {
 	http.HandleFunc(constants.DefaultEP, defaultHandler.DefaultHandler)
 	http.HandleFunc(constants.CurrentEP, currentHandler.CurrentHandler)
 	http.HandleFunc(constants.HistoryEP, historicalHandler.HistoricalHandler)
+	http.HandleFunc(constants.NotificationsEP, notificationHandler.NotificationHandler)
 	http.HandleFunc(constants.StatusEP, statusHandler.StatusHandler)
 
 	// Start http server
