@@ -36,6 +36,7 @@ type URLParams struct {
 	EndYear     string
 	SortByValue bool
 	Neighbours  bool
+	EndPoint    string
 }
 
 type Border struct {
