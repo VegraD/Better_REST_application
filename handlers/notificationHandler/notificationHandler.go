@@ -42,7 +42,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	if len(keyword) == 0 || keyword == "" {
 		err := json.NewEncoder(w).Encode(db)
 		if err != nil {
-			http.Error(w, "Error during encoding", http.StatusInternalServerError)
+			http.Error(w, "error during encoding", http.StatusInternalServerError)
 			return
 		}
 		return
@@ -53,7 +53,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 		if keyword == v.WebHookID {
 			err := json.NewEncoder(w).Encode(v)
 			if err != nil {
-				http.Error(w, "Error during database encoding", http.StatusInternalServerError)
+				http.Error(w, "error during database encoding", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -71,14 +71,14 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&webhook)
 
 	if err != nil {
-		http.Error(w, "Cannot decode request", http.StatusBadRequest)
+		http.Error(w, "cannot decode request", http.StatusBadRequest)
 		return
 	}
 
 	webhookR, err := requestToRegistered(webhook, validateAndSetID())
 
 	if err != nil {
-		http.Error(w, "Error during JSON request translation", http.StatusInternalServerError)
+		http.Error(w, "error during JSON request translation", http.StatusInternalServerError)
 		return
 	}
 
@@ -90,7 +90,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID})
 
 	if err != nil {
-		http.Error(w, "Error during response decoding", http.StatusInternalServerError)
+		http.Error(w, "error during response decoding", http.StatusInternalServerError)
 		return
 	}
 
