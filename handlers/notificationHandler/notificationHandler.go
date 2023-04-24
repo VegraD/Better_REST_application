@@ -31,7 +31,11 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	err := json.NewEncoder(w).Encode(db)
 	if err != nil {
 		http.Error(w, "Error during database encoding", http.StatusInternalServerError)
+		return
 	}
+
+	// No content if no action is taken above this point.
+	http.Error(w, "", http.StatusNoContent)
 
 }
 
@@ -41,4 +45,15 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 
+}
+
+// TODO: error handling
+func requestToResponse(request structs.WebHookRequest, id string) (structs.RegisteredWebHook, error) {
+
+	return structs.RegisteredWebHook{
+		WebHookID: fmt.Sprintf(id),
+		Url:       fmt.Sprintf(request.URL),
+		Country:   fmt.Sprintf(request.Country),
+		CallS:     request.Calls,
+	}, nil
 }
