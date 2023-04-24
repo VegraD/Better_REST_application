@@ -84,10 +84,13 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 
 	db = append(db, webhookR)
 
+	//TODO: do this smoother, what if encoder fails??
+	w.WriteHeader(http.StatusCreated)
+
 	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID})
 
 	if err != nil {
-		http.Error(w, "Error during encoding of response", http.StatusInternalServerError)
+		http.Error(w, "Error during response decoding", http.StatusInternalServerError)
 		return
 	}
 
