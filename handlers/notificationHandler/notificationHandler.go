@@ -41,6 +41,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//TODO: Implement check in firebase
 	for _, v := range db {
 		if keyword == v.WebHookID {
 			err := json.NewEncoder(w).Encode(v)
