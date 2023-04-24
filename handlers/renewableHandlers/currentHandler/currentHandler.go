@@ -2,12 +2,12 @@ package currentHandler
 
 import (
 	"assignment-2/constants"
+	"assignment-2/handlers/renewableHandlers/renewableUtils"
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
 	"fmt"
 	"net/http"
-	"path"
 	"strings"
 )
 
@@ -26,19 +26,36 @@ func CurrentHandler(w http.ResponseWriter, r *http.Request) {
 // handleRenewablesCurrentGetRequest handles the get request for the current renewable energy information
 func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	//url := url.parse(r.URL.String())
-	pathBase := path.Base(r.URL.Path)
-	if pathBase == "current" {
-		//Find information for all countries
-		findAllCountriesInformation(w, r)
-	} else if strings.EqualFold(r.URL.Query().Get("neighbours"), "true") {
-		//Find information for neighbours
-		findCountryNeighbours(w, pathBase)
+	//pathBase := path.Base(r.URL.Path)
+	//if pathBase == "current" {
+	//	//Find information for all countries
+	//	findAllCountriesInformation(w, r)
+	//} else if strings.EqualFold(r.URL.Query().Get("neighbours"), "true") {
+	//	//Find information for neighbours
+	//	findCountryNeighbours(w, pathBase)
+	//
+	//} else {
+	//	//Find information for country
+	//	singleCountry := findSingleCountryInformation(w, pathBase)
+	//	json_coder.PrettyPrint(w, singleCountry)
+	//}
 
-	} else {
-		//Find information for country
-		singleCountry := findSingleCountryInformation(w, pathBase)
-		json_coder.PrettyPrint(w, singleCountry)
+	params, err := utils.GetCurrentDataParams(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
+	params.EndPoint = constants.Current // Set the endpoint to current for selecting the correct data.
+	if params.Country == "" || params.Country == "null" {
+		params.BeginYear, params.EndYear = constants.CurrentYear, constants.CurrentYear
+		renewableUtils.GetAllCountries(w, params)
+	} else if params.Neighbours {
+		findAllCountriesInformation(w, r)
+	} else {
+		renewableUtils.GetSpecifiedCountry(w, params)
+	}
+
 }
 
 // findSingleCountryInformation find the renewable information on the single country that have been specified
