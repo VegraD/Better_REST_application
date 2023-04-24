@@ -28,10 +28,13 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		//Find information for country
-		findSingleCountryInformation(w, pathBase)
+		//findSingleCountryInformation(w, pathBase)
 	}
 }
 
+//
+
+/*'
 // findSingleCountryInformation finds the information about a single country
 func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
 	url := buildCountryUrl(pathBase)
@@ -106,3 +109,4 @@ func GetCountryRenewables(csvData []structs.Renewables, country string) (int, fl
 
 	return latestYear, renewablePercantage
 }
+*/
