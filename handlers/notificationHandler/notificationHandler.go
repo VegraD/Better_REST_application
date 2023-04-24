@@ -30,14 +30,21 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "application/json")
+	keyword := ""
 
 	parts := strings.Split(r.URL.Path, "/")
 
-	keyword := parts[4]
+	if len(parts) >= 3 {
+		keyword = parts[4]
+	}
 
-	//TODO: Check for blank spaces!
+	//TODO: Check for blank spaces! unicode.IsSpace (need to check each byte)
 	if len(keyword) == 0 || keyword == "" {
-		http.Error(w, "Kindly provide a valid webhook ID!", http.StatusBadRequest)
+		err := json.NewEncoder(w).Encode(db)
+		if err != nil {
+			http.Error(w, "Error during encoding", http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 
