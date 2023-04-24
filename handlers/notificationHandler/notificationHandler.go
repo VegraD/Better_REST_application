@@ -41,7 +41,21 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
+	webhook := structs.WebHookRequest{}
 
+	w.Header().Add("content-type", "application/json")
+	err := json.NewDecoder(r.Body).Decode(&webhook)
+
+	if err != nil {
+		http.Error(w, "Cannot decode request", http.StatusBadRequest)
+		return
+	}
+
+	webhookR, err := requestToResponse(webhook, getRandomId())
+
+	db = append(db, webhookR)
+
+	http.Error(w, "", http.StatusNoContent)
 }
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
