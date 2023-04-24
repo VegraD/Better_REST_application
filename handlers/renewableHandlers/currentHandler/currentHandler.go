@@ -1,8 +1,12 @@
 package currentHandler
 
 import (
+	"assignment-2/json_coder"
+	"assignment-2/structs"
+	"assignment-2/utils"
 	"net/http"
 	"path"
+	"strings"
 )
 
 // CurrentHandler is the handler to get current information about countries renewable energy
@@ -23,16 +27,43 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	pathBase := path.Base(r.URL.Path)
 	if pathBase == "current" {
 		//Find information for all countries
-	} else if r.URL.Query().Get("country") == "true" {
+	} else if r.URL.Query().Get("neighbours") == "true" {
 		//Find information for neighbours
 
 	} else {
 		//Find information for country
-		//findSingleCountryInformation(w, pathBase)
+		findSingleCountryInformation(w, pathBase)
 	}
 }
 
-//
+// findSingleCountryInformation find the renewable information on the single country that have been specified
+func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
+	countries, err := utils.GetCountriesFromCsv()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Filter the countries by the parameters specified in the URL
+	var singleCountry []structs.CountryInfo
+	for _, c := range countries.Countries {
+		if strings.EqualFold(c.Country, pathBase) || strings.EqualFold(c.IsoCode, pathBase) {
+			if len(singleCountry) > 0 && singleCountry[0].Year >= c.Year {
+				continue
+			}
+			singleCountry = singleCountry[:0] // Clear the slice
+			singleCountry = append(singleCountry, c)
+		}
+	}
+
+	// No countries with the specified parameters were found
+	if len(singleCountry) == 0 {
+		http.Error(w, "Country not found", http.StatusNotFound)
+		return
+	}
+	json_coder.PrettyPrint(w, singleCountry)
+
+}
 
 /*'
 // findSingleCountryInformation finds the information about a single country
