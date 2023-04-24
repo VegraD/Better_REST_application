@@ -37,6 +37,11 @@ type URLParams struct {
 	SortByValue bool
 }
 
+type Border struct {
+	Landlocked bool     `json:"landlocked"`
+	Borders    []string `json:"borders"`
+}
+
 // ################################################## Webhook structs ##################################################
 
 type RegisteredWebHook struct {
