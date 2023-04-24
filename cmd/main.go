@@ -6,9 +6,9 @@ package main
 
 import (
 	"assignment-2/constants"
-	"assignment-2/handlers/currentHandler"
 	"assignment-2/handlers/defaultHandler"
-	"assignment-2/handlers/historicalHandler"
+	"assignment-2/handlers/renewableHandlers/currentHandler"
+	"assignment-2/handlers/renewableHandlers/historicalHandler"
 	"assignment-2/handlers/statusHandler"
 	"fmt"
 	"log"

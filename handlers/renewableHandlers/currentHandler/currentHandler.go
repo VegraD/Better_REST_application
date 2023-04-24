@@ -1,12 +1,6 @@
 package currentHandler
 
 import (
-	"assignment-2/constants"
-	"assignment-2/csv_coder"
-	"assignment-2/json_coder"
-	"assignment-2/structs"
-	"encoding/csv"
-	"fmt"
 	"net/http"
 	"path"
 )
