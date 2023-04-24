@@ -10,6 +10,8 @@ import (
 	"strconv"
 )
 
+// OpenFile is a wrapper function for opening a file. Will return an error if the file does not exist or if it could
+// not be opened.
 func OpenFile(path string) (*os.File, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -23,6 +25,7 @@ func OpenFile(path string) (*os.File, error) {
 }
 
 // CloseFile is a wrapper function for closing a file. Could be used with defer for cleaner code.
+// TODO: Add proper error handling
 func CloseFile(file *os.File) {
 	err := file.Close()
 	if err != nil {
@@ -65,21 +68,23 @@ func parseCountriesCsv(records [][]string) (structs.Countries, error) {
 			continue
 		}
 
-		y, err := strconv.Atoi(record[2])
+		// Parse the year and percentage
+		year, err := strconv.Atoi(record[2])
 		if err != nil {
 			return countries, fmt.Errorf("error parsing year: %s", err)
 		}
 
-		p, err := strconv.ParseFloat(record[3], 32)
+		percentage, err := strconv.ParseFloat(record[3], 32)
 		if err != nil {
 			return countries, fmt.Errorf("error parsing percentage: %s", err)
 		}
 
+		// Create a CountryInfo struct and append it to the Countries slice
 		countryInfo := structs.CountryInfo{
 			Country:    record[0],
 			IsoCode:    record[1],
-			Year:       y,
-			Percentage: float32(p),
+			Year:       year,
+			Percentage: float32(percentage),
 		}
 		countries.Countries = append(countries.Countries, countryInfo)
 	}
@@ -87,6 +92,7 @@ func parseCountriesCsv(records [][]string) (structs.Countries, error) {
 	return countries, nil
 }
 
+// GetCountriesFromCsv reads the historical CSV file and returns a Countries struct.
 func GetCountriesFromCsv() (structs.Countries, error) {
 	// Read the CSV file
 	csvData, err := readCsv(constants.HistoricalCsv)
