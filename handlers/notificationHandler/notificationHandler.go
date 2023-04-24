@@ -53,13 +53,12 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	webhookR, err := requestToRegistered(webhook, validateAndSetID())
-	fmt.Println("after random")
+
 	if err != nil {
 		http.Error(w, "Error during JSON request translation", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(validateAndSetID())
-	fmt.Println("before append, " + webhookR.WebHookID)
+
 	db = append(db, webhookR)
 
 	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID})
@@ -69,7 +68,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//http.Error(w, "", http.StatusNoContent)
+	http.Error(w, "", http.StatusNoContent)
 }
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +93,7 @@ func validateAndSetID() string {
 	if len(db) == 0 {
 		return idGen()
 	}
-	//TODO: change to check on firebase db
+	//TODO: change to check in firebase db
 	for i, v := range db {
 		//generate random ID
 		randID = idGen()
