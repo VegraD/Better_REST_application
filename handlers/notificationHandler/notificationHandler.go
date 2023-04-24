@@ -51,7 +51,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	webhookR, err := requestToResponse(webhook, getRandomId())
+	webhookR, err := requestToRegistered(webhook, getRandomId())
 
 	db = append(db, webhookR)
 
@@ -62,8 +62,8 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// TODO: error handling
-func requestToResponse(request structs.WebHookRequest, id string) (structs.RegisteredWebHook, error) {
+// TODO: error handling if input is empty
+func requestToRegistered(request structs.WebHookRequest, id string) (structs.RegisteredWebHook, error) {
 
 	return structs.RegisteredWebHook{
 		WebHookID: fmt.Sprintf(id),
