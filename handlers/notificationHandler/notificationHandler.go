@@ -4,6 +4,7 @@ import (
 	"assignment-2/structs"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 )
 
@@ -56,4 +57,26 @@ func requestToResponse(request structs.WebHookRequest, id string) (structs.Regis
 		Country:   fmt.Sprintf(request.Country),
 		CallS:     request.Calls,
 	}, nil
+}
+
+func getRandomId() string {
+
+	letters := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	randID := ""
+
+	//TODO: change to check on firebase db
+	for i, v := range db {
+		l := make([]byte, 13)
+		for j := range l {
+			l[j] = letters[rand.Intn(len(letters))]
+		}
+		randID = string(l)
+
+		//this should run for loop on same element again
+		if v.WebHookID == randID {
+			i--
+			continue
+		}
+	}
+	return randID
 }
