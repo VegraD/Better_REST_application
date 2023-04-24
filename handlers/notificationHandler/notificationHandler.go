@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -30,10 +31,24 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "application/json")
 
-	err := json.NewEncoder(w).Encode(db)
-	if err != nil {
-		http.Error(w, "Error during database encoding", http.StatusInternalServerError)
+	parts := strings.Split(r.URL.Path, "/")
+
+	keyword := parts[4]
+
+	//TODO: Check for blank spaces!
+	if len(keyword) == 0 || keyword == "" {
+		http.Error(w, "Kindly provide a valid webhook ID!", http.StatusBadRequest)
 		return
+	}
+
+	for _, v := range db {
+		if keyword == v.WebHookID {
+			err := json.NewEncoder(w).Encode(v)
+			if err != nil {
+				http.Error(w, "Error during database encoding", http.StatusInternalServerError)
+				return
+			}
+		}
 	}
 
 	// No content if no action is taken above this point.
