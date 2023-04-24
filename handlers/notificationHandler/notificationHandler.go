@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 var db = []structs.RegisteredWebHook{}
@@ -51,11 +52,24 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	webhookR, err := requestToRegistered(webhook, getRandomId())
-
+	webhookR, err := requestToRegistered(webhook, validateAndSetID())
+	fmt.Println("after random")
+	if err != nil {
+		http.Error(w, "Error during JSON request translation", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(validateAndSetID())
+	fmt.Println("before append, " + webhookR.WebHookID)
 	db = append(db, webhookR)
 
-	http.Error(w, "", http.StatusNoContent)
+	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID})
+
+	if err != nil {
+		http.Error(w, "Error during encoding of response", http.StatusInternalServerError)
+		return
+	}
+
+	//http.Error(w, "", http.StatusNoContent)
 }
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
@@ -73,18 +87,17 @@ func requestToRegistered(request structs.WebHookRequest, id string) (structs.Reg
 	}, nil
 }
 
-func getRandomId() string {
+func validateAndSetID() string {
 
-	letters := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	randID := ""
 
+	if len(db) == 0 {
+		return idGen()
+	}
 	//TODO: change to check on firebase db
 	for i, v := range db {
-		l := make([]byte, 13)
-		for j := range l {
-			l[j] = letters[rand.Intn(len(letters))]
-		}
-		randID = string(l)
+		//generate random ID
+		randID = idGen()
 
 		//this should run for loop on same element again
 		if v.WebHookID == randID {
@@ -93,4 +106,18 @@ func getRandomId() string {
 		}
 	}
 	return randID
+}
+
+func idGen() string {
+
+	//possible letters to have in ID
+	letters := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	// Seed so the random integer is not the same each time.
+	rand.Seed(time.Now().UnixNano())
+	l := make([]byte, 13)
+	for j := range l {
+		l[j] = letters[rand.Intn(len(letters))]
+	}
+	return string(l)
 }
