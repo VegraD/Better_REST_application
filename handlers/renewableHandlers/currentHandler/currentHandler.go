@@ -1,9 +1,11 @@
 package currentHandler
 
 import (
+	"assignment-2/constants"
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"fmt"
 	"net/http"
 	"path"
 	"strings"
@@ -28,21 +30,23 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	if pathBase == "current" {
 		//Find information for all countries
 		findAllCountriesInformation(w, r)
-	} else if r.URL.Query().Get("neighbours") == "true" {
+	} else if strings.EqualFold(r.URL.Query().Get("neighbours"), "true") {
 		//Find information for neighbours
+		findCountryNeighbours(w, pathBase)
 
 	} else {
 		//Find information for country
-		findSingleCountryInformation(w, pathBase)
+		singleCountry := findSingleCountryInformation(w, pathBase)
+		json_coder.PrettyPrint(w, singleCountry)
 	}
 }
 
 // findSingleCountryInformation find the renewable information on the single country that have been specified
-func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
+func findSingleCountryInformation(w http.ResponseWriter, pathBase string) []structs.CountryInfo {
 	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil
 	}
 
 	// Filter the countries by the parameters specified in the URL
@@ -60,9 +64,10 @@ func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
 	// No countries with the specified parameters were found
 	if len(singleCountry) == 0 {
 		http.Error(w, "Country not found", http.StatusNotFound)
-		return
+		return nil
 	}
-	json_coder.PrettyPrint(w, singleCountry)
+
+	return singleCountry
 
 }
 
@@ -94,83 +99,137 @@ func findAllCountriesInformation(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func findCountryNeighbours(w http.ResponseWriter, r *http.Request) {
+// finne land so jeg er ute etter.
+// print dette landet
+// bruke landets isokode til å finne den i json
+// legge naboer inn i liste
+// for hvert element i listen, print det
+func findCountryNeighbours(w http.ResponseWriter, pathBase string) {
+	//country := findSingleCountryInformation(w, pathBase)
+	var allCountries []structs.CountryInfo
+	originalCountry := findSingleCountryInformation(w, pathBase)
+	allCountries = append(allCountries, originalCountry...)
 
+	// get the information about the neighbours from the country api
+	apiLink := constants.CountryApi
+	if len(pathBase) == 3 {
+		apiLink += constants.CountryAlpha + pathBase
+	} else {
+		apiLink += constants.CountryFullTextName + pathBase + constants.CountryFullText
+	}
+
+	neighbours, err := http.Get(apiLink)
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+
+	// decode the information about the countries from the country api
+	var countryApi = json_coder.DecodeCountryNeighbour(neighbours)
+	for _, neighbour := range countryApi {
+		for _, neighbour := range neighbour.Borders {
+			countryInfo := findSingleCountryInformation(w, neighbour)
+			allCountries = append(allCountries, countryInfo...)
+
+		}
+	}
+
+	json_coder.PrettyPrint(w, allCountries)
+
+	/**
+	  	url := buildCountryUrl(country.isoCode)
+
+	  	country, err := http.Get(url)
+	  	if err != nil {
+	  		fmt.Print(err.Error())
+	  	}
+
+	  	// decode the information about the countries from the country api
+	  	var countryApi = json_coder.DecodeCountryInfo(country)
+	  	json_coder.PrettyPrint(w, countryApi)
+
+	  	csvResp := FetchCsvData()
+	  	csvData, err := DecodeCsvData(csvResp)
+	  	if err != nil {
+	  		fmt.Print(err.Error())
+	  	}
+	  	GetCountryRenewables(csvData, pathBase)
+
+	  }
+
+	  /*
+	    // findSingleCountryInformation finds the information about a single country
+	    func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
+	    	url := buildCountryUrl(pathBase)
+
+	    	country, err := http.Get(url)
+	    	if err != nil {
+	    		fmt.Print(err.Error())
+	    	}
+
+	    	// decode the information about the countries from the country api
+	    	var countryApi = json_coder.DecodeCountryInfo(country)
+	    	json_coder.PrettyPrint(w, countryApi)
+
+	    	csvResp := FetchCsvData()
+	    	csvData, err := DecodeCsvData(csvResp)
+	    	if err != nil {
+	    		fmt.Print(err.Error())
+	    	}
+	    	GetCountryRenewables(csvData, pathBase)
+
+	    }
+
+	    // buildCountryUrl builds the url for the country api
+	    func buildCountryUrl(country string) string {
+	    	// checks if the country is three letters
+	    	if len(country) == 3 {
+	    		return constants.CountryApi + constants.CountryAlpha + country
+	    	} else {
+	    		return constants.CountryApi + constants.CountryFullTextName + country + constants.CountryFullText
+	    	}
+	    }
+
+	    // FetchCsvData fetches the csv data from the url
+	    func FetchCsvData() *http.Response {
+	    	url := constants.RenewablesApi
+	    	// get the information from the apis
+	    	csvDataResp, err := http.Get(url)
+	    	if err != nil {
+	    		fmt.Print(err.Error())
+	    	}
+	    	//defer csvData.Body.Close()
+
+	    	return csvDataResp
+	    }
+
+	    // DecodeCsvData decodes the csv data
+	    func DecodeCsvData(csvDataResp *http.Response) ([]structs.Renewables, error) {
+	    	// decode the csv data
+
+	    	reader := csv.NewReader(csvDataResp.Body)
+	    	reader.TrimLeadingSpace = true
+	    	csvData, err := reader.ReadAll()
+	    	if err != nil {
+	    		return nil, err
+	    	}
+
+	    	var csvDataDecoded = csv_coder.DecodeRenewables(csvData)
+	    	return csvDataDecoded, nil
+	    }
+
+	    // GetCountryRenewables gets the latest renewable energy information for the specified country
+	    func GetCountryRenewables(csvData []structs.Renewables, country string) (int, float64) {
+	    	var latestYear int
+	    	var renewablePercantage float64
+
+	    	for _, csvData := range csvData {
+	    		if csvData.Entity == country && csvData.Year > latestYear {
+	    			latestYear = csvData.Year
+	    			renewablePercantage = csvData.Renewables
+	    		}
+	    	}
+
+	    	return latestYear, renewablePercantage
+	    }
+	*/
 }
-
-/*'
-  // findSingleCountryInformation finds the information about a single country
-  func findSingleCountryInformation(w http.ResponseWriter, pathBase string) {
-  	url := buildCountryUrl(pathBase)
-
-  	country, err := http.Get(url)
-  	if err != nil {
-  		fmt.Print(err.Error())
-  	}
-
-  	// decode the information about the countries from the country api
-  	var countryApi = json_coder.DecodeCountryInfo(country)
-  	json_coder.PrettyPrint(w, countryApi)
-
-  	csvResp := FetchCsvData()
-  	csvData, err := DecodeCsvData(csvResp)
-  	if err != nil {
-  		fmt.Print(err.Error())
-  	}
-  	GetCountryRenewables(csvData, pathBase)
-
-  }
-
-  // buildCountryUrl builds the url for the country api
-  func buildCountryUrl(country string) string {
-  	// checks if the country is three letters
-  	if len(country) == 3 {
-  		return constants.CountryApi + constants.CountryAlpha + country
-  	} else {
-  		return constants.CountryApi + constants.CountryFullTextName + country + constants.CountryFullText
-  	}
-  }
-
-  // FetchCsvData fetches the csv data from the url
-  func FetchCsvData() *http.Response {
-  	url := constants.RenewablesApi
-  	// get the information from the apis
-  	csvDataResp, err := http.Get(url)
-  	if err != nil {
-  		fmt.Print(err.Error())
-  	}
-  	//defer csvData.Body.Close()
-
-  	return csvDataResp
-  }
-
-  // DecodeCsvData decodes the csv data
-  func DecodeCsvData(csvDataResp *http.Response) ([]structs.Renewables, error) {
-  	// decode the csv data
-
-  	reader := csv.NewReader(csvDataResp.Body)
-  	reader.TrimLeadingSpace = true
-  	csvData, err := reader.ReadAll()
-  	if err != nil {
-  		return nil, err
-  	}
-
-  	var csvDataDecoded = csv_coder.DecodeRenewables(csvData)
-  	return csvDataDecoded, nil
-  }
-
-  // GetCountryRenewables gets the latest renewable energy information for the specified country
-  func GetCountryRenewables(csvData []structs.Renewables, country string) (int, float64) {
-  	var latestYear int
-  	var renewablePercantage float64
-
-  	for _, csvData := range csvData {
-  		if csvData.Entity == country && csvData.Year > latestYear {
-  			latestYear = csvData.Year
-  			renewablePercantage = csvData.Renewables
-  		}
-  	}
-
-  	return latestYear, renewablePercantage
-  }
-*/
