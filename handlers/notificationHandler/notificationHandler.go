@@ -2,7 +2,6 @@ package notificationHandler
 
 import (
 	"assignment-2/structs"
-	"assignment-2/webhooks"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -30,7 +29,7 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
-	webhooks.WebhookHandler(w, r, db)
+	//webhooks.WebhookHandler(w, r, db)
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
 
@@ -58,6 +57,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error during database encoding", http.StatusInternalServerError)
 				return
 			}
+			return
 		}
 	}
 
@@ -102,6 +102,33 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 	//TODO: implement
+
+	w.Header().Add("content-type", "application/json")
+	keyword := ""
+
+	parts := strings.Split(r.URL.Path, "/")
+
+	if len(parts) >= 3 {
+		keyword = parts[4]
+	}
+
+	//TODO: Check for blank spaces! unicode.IsSpace (need to check each byte)
+	if len(keyword) == 0 || keyword == "" {
+		http.Error(w, "please enter a valid ID to delete!", http.StatusNoContent)
+		return
+	}
+
+	//TODO: Implement check in firebase
+	for i, v := range db {
+		if keyword == v.WebHookID {
+			db = append(db[:i], db[i+1:]...)
+			http.Error(w, "webhook successfully deleted", http.StatusOK)
+			return
+		}
+	}
+
+	// No content if no action is taken above this point.
+	http.Error(w, "no valid webhook found", http.StatusNotModified)
 }
 
 // TODO: error handling if input is empty
