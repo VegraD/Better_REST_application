@@ -14,7 +14,7 @@ var ct = 0
 /*
 Reads a string from the body in plain-text and sends it to Firestore to be registered as a document
 */
-func webhookAddition(url string, country string, no_calls int) (string, error) {
+func WebhookAddition(url string, country string, no_calls int) (string, error) {
 
 	webhookId := utils.HashingTheWebhook(url, country, no_calls)
 
@@ -37,7 +37,7 @@ func webhookAddition(url string, country string, no_calls int) (string, error) {
 		return webhookId, nil
 	}
 }
-func getAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
+func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	doc, err := getResponse.Get(ctx)
 	if err != nil {
