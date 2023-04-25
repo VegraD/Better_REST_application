@@ -84,7 +84,7 @@ func getDataInYearRange(countries []structs.CountryInfo, params structs.URLParam
 
 	// Getting current year
 	if params.BeginYear == constants.CurrentYear && params.EndYear == constants.CurrentYear {
-		_, maxYear := getMinMaxYear(countries)
+		_, maxYear := GetMinMaxYear(countries)
 		beginYear = maxYear
 		endYear = maxYear
 	}
@@ -107,7 +107,7 @@ func GetSpecifiedCountry(countries []structs.CountryInfo, params structs.URLPara
 	// Get the country code from the params
 	countryQuery := params.Country
 
-	_, max := getMinMaxYear(countries)
+	_, max := GetMinMaxYear(countries)
 
 	// Get the data for the specified country
 	var country []structs.CountryInfo
