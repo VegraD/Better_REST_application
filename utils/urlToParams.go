@@ -136,7 +136,7 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 		}
 	}
 
-	neighbours := queryParams.Get("neighbours") == "true"
+	neighbours := strings.EqualFold(r.URL.Query().Get("neighbours"), "true")
 	params.Neighbours = neighbours
 
 	return params, nil
