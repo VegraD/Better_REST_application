@@ -22,6 +22,17 @@ func main() {
 	// Extract port from env
 	port := os.Getenv("PORT")
 
+	//err := firestore.InitFirestore()
+
+	/*
+		if err != nil {
+			panic(err)
+		}
+
+	*/
+
+	//TODO: defer close firestore
+
 	// Set port to default if it has not been set
 	if port == "" {
 		fmt.Println()
