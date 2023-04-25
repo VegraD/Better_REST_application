@@ -9,12 +9,23 @@ import (
 // DefaultHandler handles requests to the default endpoint.
 func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 
-	// TODO: Temporary! Find a better way.
-	if r.URL.Path != constants.DefaultEP {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
+	// Switch for the different methods
+	switch r.Method {
+	case http.MethodGet:
+		getDefault(w, r)
+	default:
+		http.Error(w, r.Method+" not supported, use "+http.MethodGet+"!", http.StatusMethodNotAllowed)
 	}
+}
 
-	// Custom func for displaying the HTML file in the browser that handles errors.
-	utils.DisplayHTML(w, constants.DefaultHtml)
+func getDefault(w http.ResponseWriter, r *http.Request) {
+
+	// switch for endpoints
+	switch r.URL.Path {
+	case constants.DefaultEP, constants.BasePath, constants.BasePath + constants.DefaultEP:
+		// Custom func for displaying the HTML file in the browser that handles errors.
+		utils.DisplayDefaultPage(w, constants.DefaultHtml)
+	default:
+		//http.Error(w, http.StatusText(http.StatusNotFound)+constants.CheckURL, http.StatusNotFound)
+	}
 }
