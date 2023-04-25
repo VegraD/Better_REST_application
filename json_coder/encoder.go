@@ -15,6 +15,7 @@ func PrettyPrint(w http.ResponseWriter, in interface{}) {
 
 	// Set content type to json
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	output, err := json.MarshalIndent(in, "", "  ")
 	if err != nil {
