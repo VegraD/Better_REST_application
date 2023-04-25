@@ -131,15 +131,38 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	if country != "" {
 		if !re.MatchString(country) {
 			return structs.URLParams{}, errors.New("country name can either be empty or contain 3-50 letters")
-		} else {
-			params.Country = strings.ToUpper(country)
+		} else if len(country) > 3 {
+			c, err := convertNameToCode(country)
+			if err != nil {
+				return structs.URLParams{}, err
+			}
+			country = c
 		}
 	}
+	params.Country = strings.ToUpper(country)
 
 	neighbours := strings.EqualFold(r.URL.Query().Get("neighbours"), "true")
 	params.Neighbours = neighbours
 
 	return params, nil
+}
+
+// convertNameToCode converts the country name to the country code.
+func convertNameToCode(countryName string) (string, error) {
+	// Get the countries from the csv file
+	countries, err := GetCountriesFromCsv()
+	if err != nil {
+		return "", err
+	}
+
+	// Get the country code
+	for _, c := range countries {
+		if strings.EqualFold(c.Country, countryName) {
+			return c.IsoCode, nil
+		}
+	}
+
+	return "", errors.New("no country with the specified country code was found")
 }
 
 // validateCountry validates the country parameter in the URL path.
