@@ -4,10 +4,14 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	firebase "firebase.google.com/go"
+	"fmt"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 )
 
 // Firebase context and client used by Firestore functions throughout the program.
@@ -58,12 +62,66 @@ func addDocument(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func displayDocuments(w http.ResponseWriter, r *http.Request) {
+	//Test for embedded message ID from URL
+	element := strings.Split(r.URL.Path, "/")
+	messageId := element[2]
+
+	if len(messageId) != 0 {
+		//Extract individual message
+
+		//Retrieve specific message based on ID (Firestore generated hash)
+		res := client.Collection(collection).Doc(messageId)
+
+		//Retreieve reference document
+
+		doc, err2 := res.Get(ctx)
+		if err2 != nil {
+			log.Println("Error extracting body of returned document of message " + messageId)
+			http.Error(w, "Error extracting body of returned document of message "+messageId, http.StatusInternalServerError)
+			return
+		}
+
+		// A message map with string keys. Each key is one field, like "text" or "timestamp"
+		m := doc.Data()
+		_, err3 := fmt.Fprintln(w, m["text"])
+		if err3 != nil {
+			log.Println("Error while writing response body of message " + messageId)
+			http.Error(w, "Error while writing response body of message "+messageId, http.StatusInternalServerError)
+			return
+		}
+	} else {
+		//Collective retrieval of messages
+		iter := client.Collection(collection).Documents(ctx) //Loops through all entries in the collection "messages"/the database
+
+		for {
+			doc, err := iter.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				log.Fatalf("Failed to iterate: %v", err)
+			}
+			// Note: You can access the document ID using "doc.Ref.ID"
+
+			// A message map with string keys. Each key is one field, like "text" or "timestamp"
+
+			m := doc.Data()
+			_, err = fmt.Fprintln(w, m)
+			if err != nil {
+				log.Println("Error while writing response body (Error: " + err.Error() + ")")
+				http.Error(w, "Error while writing response body (Error: "+err.Error()+")", http.StatusInternalServerError)
+			}
+		}
+	}
+}
+
 func handleMessage(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		//addMessage(w,r)
+		addDocument(w, r)
 	case http.MethodGet:
-		//displayMessage(w,r)
+		displayDocuments(w, r)
 	default:
 		http.Error(w, "Unsupported request method", http.StatusMethodNotAllowed)
 		return
@@ -93,5 +151,20 @@ func firebaseAndClientInit() {
 			log.Fatal("Closing of the firebase client failed. Error: ", err)
 		}
 	}()
+
+	// Make it Heroku-compatible
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	addr := ":" + port
+
+	http.HandleFunc("/messages", handleMessage) // Be forgiving in case people forget the trailing slash ('/')
+	http.HandleFunc("/messages/", handleMessage)
+	log.Printf("Firestore REST service listening on %s ...\n", addr)
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		panic(err)
+	}
 
 }
