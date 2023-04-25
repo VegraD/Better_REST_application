@@ -5,8 +5,10 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"sort"
 	"strconv"
@@ -79,6 +81,95 @@ func GetAllCountries(w http.ResponseWriter, params structs.URLParams) {
 	json_coder.PrettyPrint(w, countries.Countries)
 }
 
+func FindCountryNeighbours(w http.ResponseWriter, params structs.URLParams) {
+	// Get the country code from the params
+	countryCode := params.Country
+
+	// Get the border data from the JSON file
+	borders, err := getBorderDataFromFile(countryCode)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get all countries from csv file
+	countries, err := utils.GetCountriesFromCsv()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get the data for each neighbouring country
+	var neighbourData []structs.CountryInfo
+	var self structs.CountryInfo
+	for _, country := range countries.Countries {
+		for _, border := range borders {
+			if country.IsoCode == border {
+				neighbourData = append(neighbourData, country)
+			} else if country.IsoCode == countryCode {
+				// save the country itself in a variable
+				self = country
+			}
+		}
+	}
+
+	// Filter the data by the specified year range
+	filteredNeighbourData, err := filterCountriesByParams(neighbourData, params)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if len(filteredNeighbourData) == 0 {
+		http.Error(w, "No neighbours with the specified parameters were found", http.StatusNotFound)
+		return
+	}
+
+	// Prepend the country itself to the neighbour data
+	filteredNeighbourData = append([]structs.CountryInfo{self}, filteredNeighbourData...)
+
+	// Write the response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json_coder.PrettyPrint(w, filteredNeighbourData)
+}
+
+func getBorderDataFromFile(countryCode string) ([]string, error) {
+	// Open and read the JSON file
+	file, err := utils.OpenFile(constants.CountriesJSON)
+	if err != nil {
+		return nil, err
+	}
+	defer utils.CloseFile(file)
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the JSON data
+	var countries []struct {
+		Cca3    string   `json:"cca3"`
+		Borders []string `json:"borders"`
+	}
+	err = json.Unmarshal(data, &countries)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the border data for the given country code
+	var borderData []string
+	for _, country := range countries {
+		if country.Cca3 == countryCode {
+			borderData = country.Borders
+			break
+		}
+	}
+	if len(borderData) == 0 {
+		return nil, errors.New("no border data found for the given country code")
+	}
+
+	return borderData, nil
+}
+
 func filterCountriesByParams(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
 	beginYear, endYear, err := convertYearToInt(params)
 	if err != nil {
@@ -91,15 +182,19 @@ func filterCountriesByParams(countries []structs.CountryInfo, params structs.URL
 	// Filter the countries by the parameters specified in the URL
 	var filteredCountries []structs.CountryInfo
 	for _, c := range countries {
-		if params.Country != "" && params.Country != "null" && c.IsoCode != params.Country {
+		if c.IsoCode == "" { // Skip regions with empty IsoCode
 			continue
+		}
+		if !params.Neighbours && params.Country != "" && params.Country != constants.NullString &&
+			c.IsoCode != params.Country {
+			continue // If the country is not the one specified in the URL, skip it
 		}
 		if beginYear == -1 && endYear == -1 { // If both beginYear and endYear are -1, return only the latest year
 			if c.Year != maxYear {
-				continue
+				continue // If the year is not the latest, skip it
 			}
 		} else if (beginYear != 0 && c.Year < beginYear) || (endYear != 0 && c.Year > endYear) {
-			continue
+			continue // If the data for the country's year is outside the range, skip it
 		}
 		filteredCountries = append(filteredCountries, c)
 	}
