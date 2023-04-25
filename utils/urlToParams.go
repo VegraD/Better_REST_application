@@ -115,6 +115,9 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	return params, nil
 }
 
+// GetCurrentDataParams extracts the current data parameters from the URL query parameters and populates a
+// structs.URLParams struct with the values. If the URL path is used instead of the query parameters, the URL path
+// is converted into query parameters and then the query parameters are extracted.
 func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	params := structs.URLParams{}
 
