@@ -56,8 +56,8 @@ func readCsv(path string) ([][]string, error) {
 
 // parseCountriesCsv parses the csv file into a Countries struct which is a slice of CountryInfo structs.
 // Will return an error if the year or percentage could not be parsed.
-func parseCountriesCsv(records [][]string) (structs.Countries, error) {
-	var countries structs.Countries
+func parseCountriesCsv(records [][]string) ([]structs.CountryInfo, error) {
+	var countries []structs.CountryInfo
 
 	// Iterate through the records and populate the Countries struct
 	for _, record := range records {
@@ -85,24 +85,24 @@ func parseCountriesCsv(records [][]string) (structs.Countries, error) {
 			Year:       year,
 			Percentage: float32(percentage),
 		}
-		countries.Countries = append(countries.Countries, countryInfo)
+		countries = append(countries, countryInfo)
 	}
 
 	return countries, nil
 }
 
 // GetCountriesFromCsv reads the historical CSV file and returns a Countries struct.
-func GetCountriesFromCsv() (structs.Countries, error) {
+func GetCountriesFromCsv() ([]structs.CountryInfo, error) {
 	// Read the CSV file
 	csvData, err := readCsv(constants.HistoricalCsv)
 	if err != nil {
-		return structs.Countries{}, err
+		return []structs.CountryInfo{}, err
 	}
 
 	// Parse the CSV file
 	countries, err := parseCountriesCsv(csvData)
 	if err != nil {
-		return structs.Countries{}, err
+		return []structs.CountryInfo{}, err
 	}
 
 	return countries, nil

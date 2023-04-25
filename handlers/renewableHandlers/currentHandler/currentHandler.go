@@ -53,13 +53,13 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	if params.Country != "" && params.Country != constants.NullString { // If a country is specified
 		if params.Neighbours {
-			renewableUtils.FindCountryNeighbours(w, params)
+			renewableUtils.NeighboursResponse(w, params)
 			//findCountryNeighbours(w, "PLACEHOLDER")
 		} else {
-			renewableUtils.GetSpecifiedCountry(w, params)
+			renewableUtils.SpecifiedCountryResponse(w, params)
 		}
 	} else { // If no country is specified, find all countries
-		renewableUtils.GetAllCountries(w, params)
+		renewableUtils.AllCountriesResponse(w, params)
 	}
 
 }
@@ -74,7 +74,7 @@ func findSingleCountryInformation(w http.ResponseWriter, pathBase string) []stru
 
 	// Filter the countries by the parameters specified in the URL
 	var singleCountry []structs.CountryInfo
-	for _, c := range countries.Countries {
+	for _, c := range countries {
 		if strings.EqualFold(c.Country, pathBase) || strings.EqualFold(c.IsoCode, pathBase) {
 			if len(singleCountry) > 0 && singleCountry[0].Year >= c.Year {
 				continue
@@ -103,7 +103,7 @@ func findAllCountriesInformation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var currentYearCountries []structs.CountryInfo
-	for _, c := range countries.Countries {
+	for _, c := range countries {
 		// Skip countries that don't have an iso code as they're not countries
 		if c.IsoCode == "" {
 			continue
