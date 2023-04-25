@@ -155,11 +155,8 @@ func getDataInYearRange(countries []structs.CountryInfo, params structs.URLParam
 
 // getNeighbours returns the data for the neighbouring countries of the specified country.
 func getNeighbours(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
-	// Get the country code from the params
-	countryCode := params.Country
-
 	// Get the border data from the JSON file
-	borders, err := getBorderDataFromFile(countryCode)
+	borders, err := getBorderDataFromFile(params.Country)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +207,6 @@ func getSpecifiedCountry(countries []structs.CountryInfo, params structs.URLPara
 // writeJSONResponse writes the data to the response writer in JSON format.
 func writeJSONResponse(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	json_coder.PrettyPrint(w, data)
 }
 
@@ -250,6 +246,7 @@ func getBorderDataFromFile(countryCode string) ([]string, error) {
 		return nil, errors.New("no border data found for the given country code")
 	}
 
+	// Return the border data as a slice of strings e.g., [FIN, SWE, NOR]
 	return borderData, nil
 }
 
