@@ -40,20 +40,26 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	//	json_coder.PrettyPrint(w, singleCountry)
 	//}
 
+	// Get the parameters from the URL
 	params, err := utils.GetCurrentDataParams(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	params.EndPoint = constants.Current // Set the endpoint to current for selecting the correct data.
-	if params.Country == "" || params.Country == "null" {
-		params.BeginYear, params.EndYear = constants.CurrentYear, constants.CurrentYear
+	// Set flags for getting the correct data
+	params.EndPoint = constants.Current
+	params.BeginYear, params.EndYear = constants.CurrentYear, constants.CurrentYear
+
+	if params.Country != "" && params.Country != constants.NullString { // If a country is specified
+		if params.Neighbours {
+			renewableUtils.FindCountryNeighbours(w, params)
+			//findCountryNeighbours(w, "PLACEHOLDER")
+		} else {
+			renewableUtils.GetSpecifiedCountry(w, params)
+		}
+	} else { // If no country is specified, find all countries
 		renewableUtils.GetAllCountries(w, params)
-	} else if params.Neighbours {
-		findAllCountriesInformation(w, r)
-	} else {
-		renewableUtils.GetSpecifiedCountry(w, params)
 	}
 
 }
