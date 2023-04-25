@@ -9,11 +9,6 @@ type CountryInfo struct {
 	Percentage float32 `json:"percentage"`
 }
 
-// Countries is a struct that contains a slice of CountryInfo structs.
-type Countries struct {
-	Countries []CountryInfo
-}
-
 type Status struct {
 	CountriesApi   string `json:"countries_api"`
 	RenewablesApi  string `json:"renewable_api"`
@@ -40,6 +35,7 @@ type URLParams struct {
 }
 
 type Border struct {
+	Cca3    string   `json:"cca3"`
 	Borders []string `json:"borders"`
 }
 

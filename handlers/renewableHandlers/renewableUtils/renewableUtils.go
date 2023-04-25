@@ -14,8 +14,8 @@ import (
 	"strconv"
 )
 
-// GetSpecifiedCountry returns the historical data for the specified country.
-func GetSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
+// SpecifiedCountryResponse gives a response with data for the specified country.
+func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 	// Get all countries from csv file
 	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
@@ -23,75 +23,61 @@ func GetSpecifiedCountry(w http.ResponseWriter, params structs.URLParams) {
 		return
 	}
 
-	// Filter the countries by the parameters specified in the URL
-	countryData, err := filterCountriesByParams(countries.Countries, params)
+	// Get data for the specified country
+	countryData, err := getSpecifiedCountry(countries, params)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	} else if len(countryData) == 0 {
-		http.Error(w, "No countries with the specified parameters were found", http.StatusNotFound)
+	}
+
+	// Filter data by year range
+	countryData, err = getDataInYearRange(countryData, params)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Sort the data by percentage of renewable energy production
-	countriesToSort := structs.Countries{Countries: countryData}
-	sortByValue(params.SortByValue, countriesToSort)
+	// Sort the data by percentage of renewable energy production if sortByValue is true
+	sortByValue(params.SortByValue, countryData)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json_coder.PrettyPrint(w, countryData)
+	// Write response
+	writeJSONResponse(w, countryData)
 }
 
-// GetAllCountries returns all the countries in the csv file. It's used when no country is specified in the URL.
-func GetAllCountries(w http.ResponseWriter, params structs.URLParams) {
+// AllCountriesResponse gives a response with data for all countries.
+func AllCountriesResponse(w http.ResponseWriter, params structs.URLParams) {
 
-	// TODO: Evaluate the http status codes in this function.
-
-	// Get the countries from the csv file
+	// Get the countries  from the csv file
 	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Filter the data by the specified year range
-	filteredCountriesSlice, err := filterCountriesByParams(countries.Countries, params)
+	// Filter data by year range
+	filteredCountries, err := getDataInYearRange(countries, params)
 	if err != nil {
-		// TODO: error handling.
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Convert from CountryInfo slice to Countries struct
-	filteredCountries := structs.Countries{Countries: filteredCountriesSlice}
 
 	// Compute the mean for each country
-	countries = computeMean(filteredCountries, params)
+	filteredCountriesMean := computeMean(filteredCountries, params)
 
 	// Sort in alphabetical order of country name
-	sort.Slice(countries.Countries, func(i, j int) bool {
-		return countries.Countries[i].Country < countries.Countries[j].Country
+	sort.Slice(filteredCountriesMean, func(i, j int) bool {
+		return filteredCountriesMean[i].Country < filteredCountriesMean[j].Country
 	})
 
 	// Sort the data by percentage if sortByValue is true
-	sortByValue(params.SortByValue, countries)
+	sortByValue(params.SortByValue, filteredCountriesMean)
 
 	// Write the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json_coder.PrettyPrint(w, countries.Countries)
+	writeJSONResponse(w, filteredCountriesMean)
 }
 
-func FindCountryNeighbours(w http.ResponseWriter, params structs.URLParams) {
-	// Get the country code from the params
-	countryCode := params.Country
-
-	// Get the border data from the JSON file
-	borders, err := getBorderDataFromFile(countryCode)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+// NeighboursResponse gives a response with the data for the specified country and its neighbours.
+func NeighboursResponse(w http.ResponseWriter, params structs.URLParams) {
 	// Get all countries from csv file
 	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
@@ -100,38 +86,135 @@ func FindCountryNeighbours(w http.ResponseWriter, params structs.URLParams) {
 	}
 
 	// Get the data for each neighbouring country
+	neighbours, err := getNeighbours(countries, params)
+	if err != nil {
+		return
+	}
+
+	// Get current year data for each neighbour
+	currentNeighbours := getCurrentYearData(neighbours)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get the current year data for the specified country and prepend it to the neighbours
+	params.BeginYear, params.EndYear = constants.CurrentYear, constants.CurrentYear
+	currentCountry, err := getSpecifiedCountry(countries, params)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	currentNeighbours = append(currentCountry, currentNeighbours...)
+
+	// Write the response
+	writeJSONResponse(w, currentNeighbours)
+}
+
+// getCurrentYearData returns the data for the current year.
+func getCurrentYearData(countries []structs.CountryInfo) []structs.CountryInfo {
+	// Get max year from the data
+	_, maxYear := getMinMaxYear(countries)
+
+	var lastYearData []structs.CountryInfo
+	for _, c := range countries {
+		if c.Year == maxYear {
+			lastYearData = append(lastYearData, c)
+		}
+	}
+
+	return lastYearData
+}
+
+// getDataInYearRange returns the data for the specified year range.
+func getDataInYearRange(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+	// Get the begin and end year as integers
+	beginYear, endYear, err := convertYearToInt(params)
+	if err != nil {
+		return nil, err
+	}
+
+	// Getting current year
+	if params.BeginYear == constants.CurrentYear && params.EndYear == constants.CurrentYear {
+		_, maxYear := getMinMaxYear(countries)
+		beginYear = maxYear
+		endYear = maxYear
+	}
+
+	// Get the data for the specified year range
+	var yearRangeData []structs.CountryInfo
+	for _, c := range countries {
+		if (params.BeginYear == "" || params.BeginYear == constants.NullString || c.Year >= beginYear) &&
+			(params.EndYear == "" || params.EndYear == constants.NullString || c.Year <= endYear) {
+			yearRangeData = append(yearRangeData, c)
+		}
+	}
+
+	return yearRangeData, nil
+}
+
+// getNeighbours returns the data for the neighbouring countries of the specified country.
+func getNeighbours(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+	// Get the country code from the params
+	countryCode := params.Country
+
+	// Get the border data from the JSON file
+	borders, err := getBorderDataFromFile(countryCode)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the data for the neighbouring countries
 	var neighbourData []structs.CountryInfo
-	var self structs.CountryInfo
-	for _, country := range countries.Countries {
-		for _, border := range borders {
-			if country.IsoCode == border {
-				neighbourData = append(neighbourData, country)
-			} else if country.IsoCode == countryCode {
-				// save the country itself in a variable
-				self = country
+	for _, c := range countries {
+		for _, b := range borders {
+			if c.IsoCode == b {
+				neighbourData = append(neighbourData, c)
 			}
 		}
 	}
 
-	// Filter the data by the specified year range
-	filteredNeighbourData, err := filterCountriesByParams(neighbourData, params)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	} else if len(filteredNeighbourData) == 0 {
-		http.Error(w, "No neighbours with the specified parameters were found", http.StatusNotFound)
-		return
-	}
-
-	// Prepend the country itself to the neighbour data
-	filteredNeighbourData = append([]structs.CountryInfo{self}, filteredNeighbourData...)
-
-	// Write the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json_coder.PrettyPrint(w, filteredNeighbourData)
+	return neighbourData, err
 }
 
+// getSpecifiedCountry returns the data for the specified country.
+func getSpecifiedCountry(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+	// Get the country code from the params
+	countryQuery := params.Country
+
+	_, max := getMinMaxYear(countries)
+
+	// Get the data for the specified country
+	var country []structs.CountryInfo
+	for _, c := range countries {
+		if c.IsoCode == countryQuery || c.Country == countryQuery {
+			// Get the current year data if specified
+			if params.BeginYear == constants.CurrentYear && params.EndYear == constants.CurrentYear {
+				if c.Year == max {
+					country = append(country, c)
+				}
+			} else {
+				country = append(country, c)
+			}
+		}
+	}
+
+	// Check if the country was found
+	if len(country) == 0 {
+		return nil, errors.New("no country with the specified country code was found")
+	}
+
+	return country, nil
+}
+
+// writeJSONResponse writes the data to the response writer in JSON format.
+func writeJSONResponse(w http.ResponseWriter, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json_coder.PrettyPrint(w, data)
+}
+
+// getBorderDataFromFile gets the border data for the given country code from the JSON file.
 func getBorderDataFromFile(countryCode string) ([]string, error) {
 	// Open and read the JSON file
 	file, err := utils.OpenFile(constants.CountriesJSON)
@@ -170,48 +253,6 @@ func getBorderDataFromFile(countryCode string) ([]string, error) {
 	return borderData, nil
 }
 
-func filterCountriesByParams(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
-	beginYear, endYear, err := convertYearToInt(params)
-	if err != nil {
-		return nil, err
-	}
-
-	// Find the min and max year in the dataset.
-	minYear, maxYear := findMinAndMaxYear(countries)
-
-	// Filter the countries by the parameters specified in the URL
-	var filteredCountries []structs.CountryInfo
-	for _, c := range countries {
-		if c.IsoCode == "" { // Skip regions with empty IsoCode
-			continue
-		}
-		if !params.Neighbours && params.Country != "" && params.Country != constants.NullString &&
-			c.IsoCode != params.Country {
-			continue // If the country is not the one specified in the URL, skip it
-		}
-		if beginYear == -1 && endYear == -1 { // If both beginYear and endYear are -1, return only the latest year
-			if c.Year != maxYear {
-				continue // If the year is not the latest, skip it
-			}
-		} else if (beginYear != 0 && c.Year < beginYear) || (endYear != 0 && c.Year > endYear) {
-			continue // If the data for the country's year is outside the range, skip it
-		}
-		filteredCountries = append(filteredCountries, c)
-	}
-
-	// If no data was found for the given year or year range, return an error
-	if len(filteredCountries) == 0 {
-		if (params.BeginYear != "" && params.BeginYear != "-1" && beginYear < minYear) ||
-			(params.EndYear != "" && params.EndYear != "-1" && endYear > maxYear) ||
-			(params.BeginYear != "" && params.BeginYear != "-1" && beginYear > maxYear) ||
-			(params.EndYear != "" && params.EndYear != "-1" && endYear < minYear) {
-			return nil, errors.New("no data found for the given year or range of years")
-		}
-	}
-
-	return filteredCountries, nil
-}
-
 // convertYearToInt converts the beginYear and endYear parameters from the URL to int.
 func convertYearToInt(params structs.URLParams) (int, int, error) {
 	var beginYear, endYear int
@@ -231,8 +272,8 @@ func convertYearToInt(params structs.URLParams) (int, int, error) {
 	return beginYear, endYear, nil
 }
 
-// findMinAndMaxYear finds the minimum and maximum year in the dataset.
-func findMinAndMaxYear(countries []structs.CountryInfo) (int, int) {
+// getMinMaxYear finds the minimum and maximum year in the dataset.
+func getMinMaxYear(countries []structs.CountryInfo) (int, int) {
 	// sort the countries by year, then return the first and last element
 	sort.Slice(countries, func(i, j int) bool {
 		return countries[i].Year < countries[j].Year
@@ -242,26 +283,26 @@ func findMinAndMaxYear(countries []structs.CountryInfo) (int, int) {
 
 // sortByValue sorts the countries slice by percentage of renewable energy if the sort parameter from the URL is set to
 // true. The countries will be sorted in ascending order.
-func sortByValue(sbv bool, countries structs.Countries) {
+func sortByValue(sbv bool, countries []structs.CountryInfo) {
 	if sbv {
-		sort.Slice(countries.Countries, func(i, j int) bool {
-			return countries.Countries[i].Percentage < countries.Countries[j].Percentage
+		sort.Slice(countries, func(i, j int) bool {
+			return countries[i].Percentage < countries[j].Percentage
 		})
 	}
 }
 
 // computeMean computes the mean of the percentages for each country and returns a new slice of countries with the mean.
 // Will map the iso codes to a slice of percentages. The order of the countries will not be guaranteed.
-func computeMean(countries structs.Countries, params structs.URLParams) structs.Countries {
+func computeMean(countries []structs.CountryInfo, params structs.URLParams) []structs.CountryInfo {
 
 	// Map the iso codes
 	isoCodeMap := make(map[string][]float32)
-	for _, country := range countries.Countries {
+	for _, country := range countries {
 		isoCodeMap[country.IsoCode] = append(isoCodeMap[country.IsoCode], country.Percentage)
 	}
 
 	// Create a new slice of countries with the mean
-	var newCountries structs.Countries
+	var newCountries []structs.CountryInfo
 	for isoCode, percentages := range isoCodeMap {
 		mean := 0.0
 		for _, percentage := range percentages {
@@ -269,15 +310,14 @@ func computeMean(countries structs.Countries, params structs.URLParams) structs.
 		}
 		mean /= float64(len(percentages))
 
-		// TODO: better way to omit the year field in the json response?
 		// Find the country with the iso code and set the percentage to the mean
-		for _, country := range countries.Countries {
+		for _, country := range countries {
 			if country.IsoCode == isoCode {
 				country.Percentage = float32(mean)
 				if params.EndPoint == constants.History {
 					country.Year = 0 // Set Year field to 0, so it's omitted in the json response.
 				}
-				newCountries.Countries = append(newCountries.Countries, country)
+				newCountries = append(newCountries, country)
 				break
 			}
 		}
