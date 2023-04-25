@@ -39,7 +39,7 @@ func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 	sortByValue(params.SortByValue, countryData)
 
 	// Write response
-	writeJSONResponse(w, countryData)
+	json_coder.PrettyPrint(w, countryData)
 }
 
 // AllCountriesResponse gives a response with data for all countries.
@@ -130,40 +130,6 @@ func GetSpecifiedCountry(countries []structs.CountryInfo, params structs.URLPara
 	}
 
 	return country, nil
-}
-
-// writeJSONResponse writes the data to the response writer in JSON format.
-func writeJSONResponse(w http.ResponseWriter, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json_coder.PrettyPrint(w, data)
-}
-
-// getBorderDataFromFile gets the border data for the given country code from the JSON file.
-// TODO: Improve error handling
-func getBorderDataFromFile(countryCode string) ([]string, error) {
-	// Create the array to store the border data
-	var neighbourArray []string
-
-	// Create the api link by adding the country code to the api link
-	apiLink := constants.CountryApi + constants.CountryAlpha + countryCode
-
-	// Get the data from the api
-	neighbours, err := http.Get(apiLink)
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-
-	// Decode the data from the api to the struct
-	var countryApi = json_coder.DecodeCountryNeighbour(neighbours)
-	// Get the border data from the struct
-	for _, neighbour := range countryApi {
-		neighbourArray = neighbour.Borders
-	}
-
-	// Return the border data as a slice of strings e.g, ["USA", "CAN"]
-	return neighbourArray, nil
-
 }
 
 // convertYearToInt converts the beginYear and endYear parameters from the URL to int.
