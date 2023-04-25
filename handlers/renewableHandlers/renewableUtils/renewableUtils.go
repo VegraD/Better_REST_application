@@ -5,10 +5,8 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"sort"
 	"strconv"
@@ -215,42 +213,30 @@ func writeJSONResponse(w http.ResponseWriter, data interface{}) {
 }
 
 // getBorderDataFromFile gets the border data for the given country code from the JSON file.
+// TODO: Improve error handling
 func getBorderDataFromFile(countryCode string) ([]string, error) {
-	// Open and read the JSON file
-	file, err := utils.OpenFile(constants.CountriesJSON)
+	// Create the array to store the border data
+	var neighbourArray []string
+
+	// Create the api link by adding the country code to the api link
+	apiLink := constants.CountryApi + constants.CountryAlpha + countryCode
+
+	// Get the data from the api
+	neighbours, err := http.Get(apiLink)
 	if err != nil {
-		return nil, err
-	}
-	defer utils.CloseFile(file)
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return nil, err
+		fmt.Print(err.Error())
 	}
 
-	// Unmarshal the JSON data
-	var countries []struct {
-		Cca3    string   `json:"cca3"`
-		Borders []string `json:"borders"`
-	}
-	err = json.Unmarshal(data, &countries)
-	if err != nil {
-		return nil, err
+	// Decode the data from the api to the struct
+	var countryApi = json_coder.DecodeCountryNeighbour(neighbours)
+	// Get the border data from the struct
+	for _, neighbour := range countryApi {
+		neighbourArray = neighbour.Borders
 	}
 
-	// Get the border data for the given country code
-	var borderData []string
-	for _, country := range countries {
-		if country.Cca3 == countryCode {
-			borderData = country.Borders
-			break
-		}
-	}
-	if len(borderData) == 0 {
-		return nil, errors.New("no border data found for the given country code")
-	}
+	// Return the border data as a slice of strings e.g, ["USA", "CAN"]
+	return neighbourArray, nil
 
-	return borderData, nil
 }
 
 // convertYearToInt converts the beginYear and endYear parameters from the URL to int.
