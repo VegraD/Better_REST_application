@@ -1,6 +1,7 @@
 package notificationHandler
 
 import (
+	"assignment-2/db/firestore"
 	"assignment-2/structs"
 	"encoding/json"
 	"fmt"
@@ -56,10 +57,15 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: Implement check in firebase
 
-	// Only relevant if keyword is set; checks if one of the elemtents in database has the relevant
+	// Only relevant if keyword is set; checks if one of the elements in database has the relevant
 	for _, v := range Db {
 		if keyword == v.WebHookID {
-			err := json.NewEncoder(w).Encode(v)
+			webhook, err := firestore.GetAndDisplayWebhook(v.WebHookID)
+			if err != nil {
+				http.Error(w, "error fetching webhook", http.StatusInternalServerError)
+				return
+			}
+			err = json.NewEncoder(w).Encode(webhook)
 			if err != nil {
 				http.Error(w, "error during database encoding", http.StatusInternalServerError)
 				return
@@ -102,8 +108,14 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	id, err := firestore.WebhookAddition(webhookR.Url, webhookR.Country, webhookR.CallS)
+
+	if err != nil {
+		http.Error(w, "couldnt add webhook to server", http.StatusInternalServerError)
+	}
+
 	// Append webhook to database
-	Db = append(Db, webhookR)
+	//Db = append(Db, webhookR)
 
 	//TODO: do this smoother, what if encoder fails??
 
@@ -111,7 +123,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	// encode response into JSON format
-	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID})
+	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: id})
 
 	if err != nil {
 		http.Error(w, "error during response decoding", http.StatusInternalServerError)
