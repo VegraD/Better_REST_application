@@ -52,3 +52,8 @@ const (
 	// baseEP is the base path for all endpoints.
 	baseEP string = "/energy/v1"
 )
+
+// Firestore ServieAccountLocation
+const (
+	ServiceAccountLocation string = "./assignment-2-key.json"
+)
