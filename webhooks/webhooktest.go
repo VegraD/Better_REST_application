@@ -23,7 +23,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request, db []structs.Registe
 			log.Println("Trigger event: Call to service endpoint with method " + http.MethodGet +
 				" and content '" + string(str) + "'.")
 
-			err = callURL(v.Url, http.MethodGet, string(str))
+			go callURL(v.Url, http.MethodGet, string(str))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
@@ -34,7 +34,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request, db []structs.Registe
 		for _, v := range db {
 			log.Println("Trigger event: Call to service endpoint with method " + http.MethodPost +
 				" and content '" + string(str) + "'.")
-			err = callURL(v.Url, http.MethodPost, string(str))
+			go callURL(v.Url, http.MethodPost, string(str))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
@@ -45,7 +45,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request, db []structs.Registe
 		for _, v := range db {
 			log.Println("Trigger event: Call to service endpoint with method " + http.MethodDelete +
 				" and content '" + string(str) + "'.")
-			err = callURL(v.Url, http.MethodDelete, string(str))
+			go callURL(v.Url, http.MethodDelete, string(str))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
