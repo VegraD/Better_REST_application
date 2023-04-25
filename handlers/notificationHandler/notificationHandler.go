@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var db = []structs.RegisteredWebHook{}
+var Db = []structs.RegisteredWebHook{}
 
 func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -29,7 +29,7 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
-	//webhooks.WebhookHandler(w, r, db)
+	//webhooks.WebhookHandler(w, r, Db)
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
 
@@ -41,7 +41,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: Check for blank spaces! unicode.IsSpace (need to check each byte)
 	if len(keyword) == 0 || keyword == "" {
-		err := json.NewEncoder(w).Encode(db)
+		err := json.NewEncoder(w).Encode(Db)
 		if err != nil {
 			http.Error(w, "error during encoding", http.StatusInternalServerError)
 			return
@@ -50,7 +50,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO: Implement check in firebase
-	for _, v := range db {
+	for _, v := range Db {
 		if keyword == v.WebHookID {
 			err := json.NewEncoder(w).Encode(v)
 			if err != nil {
@@ -67,7 +67,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
-	//webhooks.WebhookHandler(w, r, db)
+	//webhooks.WebhookHandler(w, r, Db)
 	webhook := structs.WebHookRequest{}
 
 	w.Header().Add("content-type", "application/json")
@@ -85,7 +85,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db = append(db, webhookR)
+	Db = append(Db, webhookR)
 
 	//TODO: do this smoother, what if encoder fails??
 	w.WriteHeader(http.StatusCreated)
@@ -119,9 +119,9 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO: Implement check in firebase
-	for i, v := range db {
+	for i, v := range Db {
 		if keyword == v.WebHookID {
-			db = append(db[:i], db[i+1:]...)
+			Db = append(Db[:i], Db[i+1:]...)
 			http.Error(w, "webhook successfully deleted", http.StatusOK)
 			return
 		}
@@ -146,11 +146,11 @@ func validateAndSetID() string {
 
 	randID := ""
 
-	if len(db) == 0 {
+	if len(Db) == 0 {
 		return idGen()
 	}
-	//TODO: change to check in firebase db
-	for i, v := range db {
+	//TODO: change to check in firebase Db
+	for i, v := range Db {
 		//generate random ID
 		randID = idGen()
 
