@@ -101,32 +101,9 @@ func getDataInYearRange(countries []structs.CountryInfo, params structs.URLParam
 	return yearRangeData, nil
 }
 
-// getNeighbours returns the data for the neighbouring countries of the specified country.
-func getNeighbours(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
-	// Get the country code from the params
-	countryCode := params.Country
-
-	// Get the border data from the JSON file
-	borders, err := getBorderDataFromFile(countryCode)
-	if err != nil {
-		return nil, err
-	}
-
-	// Get the data for the neighbouring countries
-	var neighbourData []structs.CountryInfo
-	for _, c := range countries {
-		for _, b := range borders {
-			if c.IsoCode == b {
-				neighbourData = append(neighbourData, c)
-			}
-		}
-	}
-
-	return neighbourData, err
-}
-
-// getSpecifiedCountry returns the data for the specified country.
-func getSpecifiedCountry(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
+// GetSpecifiedCountry returns the data for the specified country.
+// TODO: Have made function public. Consider splitting this function to have lower cohesion in code
+func GetSpecifiedCountry(countries []structs.CountryInfo, params structs.URLParams) ([]structs.CountryInfo, error) {
 	// Get the country code from the params
 	countryQuery := params.Country
 
