@@ -30,13 +30,10 @@ const (
 // External API paths
 const (
 	// CountryApi is the endpoint path for retrieving country information.
-	CountryApi = "http://129.241.150.113:8080/v3.1"
+	CountryApi = "http://129.241.150.113:8080/"
 
-	// CountryFullText is the query parameter to limit country results to full text matches.
-	CountryFullText = "?fullText=true"
-
-	// CountryFullTextName is the query parameter to search for country based on full text name.
-	CountryFullTextName = "/name/"
+	// countyreApiVersion is the version of the country API.
+	CountryApiVersion = "/v3.1/"
 
 	// CountryAlpha it the subdirectory to search for country based on alpha code
 	CountryAlpha = "/alpha/"
