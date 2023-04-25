@@ -132,7 +132,7 @@ func getBorderDataFromApi(countryCode string) ([]string, error) {
 	var neighbourArray []string
 
 	// Create the api link by adding the country code to the api link
-	apiLink := constants.CountryApi + constants.CountryAlpha + countryCode
+	apiLink := constants.CountryApi + constants.CountryApiVersion + constants.CountryAlpha + countryCode
 
 	// Get the data from the api
 	neighbours, err := http.Get(apiLink)
@@ -269,7 +269,7 @@ func findCountryNeighbours(w http.ResponseWriter, pathBase string) {
 	if len(pathBase) == 3 {
 		apiLink += constants.CountryAlpha + pathBase
 	} else {
-		apiLink += constants.CountryFullTextName + pathBase + constants.CountryFullText
+		//apiLink += constants.CountryFullTextName + pathBase + constants.CountryFullText
 	}
 
 	neighbours, err := http.Get(apiLink)

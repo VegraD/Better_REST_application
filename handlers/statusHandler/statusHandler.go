@@ -38,7 +38,6 @@ in the program, and "pretty print" it to the user.
 func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 
 	countryResp := getApiStatus(constants.CountryApi)
-	renewablesResp := getApiStatus(constants.RenewablesApi)
 
 	//TODO: Add correct url
 	notificationResp := getApiStatus("https://restcountries.com/")
@@ -46,13 +45,12 @@ func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 	//TODO: Add correct url
 	webhookResp := getApiStatus("https://restcountries.com/")
 
-	json_coder.PrettyPrint(w, Status(countryResp, renewablesResp, notificationResp, webhookResp))
+	json_coder.PrettyPrint(w, Status(countryResp, notificationResp, webhookResp))
 }
 
-func Status(country string, renewables string, notification string, webhook string) structs.Status {
+func Status(country string, notification string, webhook string) structs.Status {
 	return structs.Status{
 		CountriesApi:   country,
-		RenewablesApi:  renewables,
 		NotificationDB: notification,
 		Webhooks:       webhook,
 		Version:        constants.Version,
