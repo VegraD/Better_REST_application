@@ -1,0 +1,657 @@
+[
+    {
+        "name": {
+            "common": "Norway",
+            "official": "Kingdom of Norway",
+            "nativeName": {
+                "nno": {
+                    "official": "Kongeriket Noreg",
+                    "common": "Noreg"
+                },
+                "nob": {
+                    "official": "Kongeriket Norge",
+                    "common": "Norge"
+                },
+                "smi": {
+                    "official": "Norgga gonagasriika",
+                    "common": "Norgga"
+                }
+            }
+        },
+        "tld": [
+            ".no"
+        ],
+        "cca2": "NO",
+        "ccn3": "578",
+        "cca3": "NOR",
+        "cioc": "NOR",
+        "independent": true,
+        "status": "officially-assigned",
+        "unMember": true,
+        "currencies": {
+            "NOK": {
+                "name": "Norwegian krone",
+                "symbol": "kr"
+            }
+        },
+        "idd": {
+            "root": "+4",
+            "suffixes": [
+                "7"
+            ]
+        },
+        "capital": [
+            "Oslo"
+        ],
+        "altSpellings": [
+            "NO",
+            "Norge",
+            "Noreg",
+            "Kingdom of Norway",
+            "Kongeriket Norge",
+            "Kongeriket Noreg"
+        ],
+        "region": "Europe",
+        "subregion": "Northern Europe",
+        "languages": {
+            "nno": "Norwegian Nynorsk",
+            "nob": "Norwegian Bokmål",
+            "smi": "Sami"
+        },
+        "translations": {
+            "ara": {
+                "official": "مملكة النرويج",
+                "common": "النرويج"
+            },
+            "bre": {
+                "official": "Rouantelezh Norvegia",
+                "common": "Norvegia"
+            },
+            "ces": {
+                "official": "Norské království",
+                "common": "Norsko"
+            },
+            "cym": {
+                "official": "Kingdom of Norway",
+                "common": "Norway"
+            },
+            "deu": {
+                "official": "Königreich Norwegen",
+                "common": "Norwegen"
+            },
+            "est": {
+                "official": "Norra Kuningriik",
+                "common": "Norra"
+            },
+            "fin": {
+                "official": "Norjan kuningaskunta",
+                "common": "Norja"
+            },
+            "fra": {
+                "official": "Royaume de Norvège",
+                "common": "Norvège"
+            },
+            "hrv": {
+                "official": "Kraljevina Norveška",
+                "common": "Norveška"
+            },
+            "hun": {
+                "official": "Norvég Királyság",
+                "common": "Norvégia"
+            },
+            "ita": {
+                "official": "Regno di Norvegia",
+                "common": "Norvegia"
+            },
+            "jpn": {
+                "official": "ノルウェー王国",
+                "common": "ノルウェー"
+            },
+            "kor": {
+                "official": "노르웨이 왕국",
+                "common": "노르웨이"
+            },
+            "nld": {
+                "official": "Koninkrijk Noorwegen",
+                "common": "Noorwegen"
+            },
+            "per": {
+                "official": "پادشاهی نروژ",
+                "common": "نروژ"
+            },
+            "pol": {
+                "official": "Królestwo Norwegii",
+                "common": "Norwegia"
+            },
+            "por": {
+                "official": "Reino da Noruega",
+                "common": "Noruega"
+            },
+            "rus": {
+                "official": "Королевство Норвегия",
+                "common": "Норвегия"
+            },
+            "slk": {
+                "official": "Nórske kráľovstvo",
+                "common": "Nórsko"
+            },
+            "spa": {
+                "official": "Reino de Noruega",
+                "common": "Noruega"
+            },
+            "srp": {
+                "official": "Краљевина Норвешка",
+                "common": "Норвешка"
+            },
+            "swe": {
+                "official": "Konungariket Norge",
+                "common": "Norge"
+            },
+            "tur": {
+                "official": "Norveç Krallığı",
+                "common": "Norveç"
+            },
+            "urd": {
+                "official": "مملکتِ ناروے",
+                "common": "ناروے"
+            },
+            "zho": {
+                "official": "挪威王国",
+                "common": "挪威"
+            }
+        },
+        "latlng": [
+            62.0,
+            10.0
+        ],
+        "landlocked": false,
+        "borders": [
+            "FIN",
+            "SWE",
+            "RUS"
+        ],
+        "area": 323802.0,
+        "demonyms": {
+            "eng": {
+                "f": "Norwegian",
+                "m": "Norwegian"
+            },
+            "fra": {
+                "f": "Norvégienne",
+                "m": "Norvégien"
+            }
+        },
+        "flag": "\uD83C\uDDF3\uD83C\uDDF4",
+        "maps": {
+            "googleMaps": "https://goo.gl/maps/htWRrphA7vNgQNdSA",
+            "openStreetMaps": "https://www.openstreetmap.org/relation/2978650"
+        },
+        "population": 5379475,
+        "gini": {
+            "2018": 27.6
+        },
+        "fifa": "NOR",
+        "car": {
+            "signs": [
+                "N"
+            ],
+            "side": "right"
+        },
+        "timezones": [
+            "UTC+01:00"
+        ],
+        "continents": [
+            "Europe"
+        ],
+        "flags": {
+            "png": "https://flagcdn.com/w320/no.png",
+            "svg": "https://flagcdn.com/no.svg",
+            "alt": "The flag of Norway has a red field with a large white-edged navy blue cross that extends to the edges of the field. The vertical part of this cross is offset towards the hoist side."
+        },
+        "coatOfArms": {
+            "png": "https://mainfacts.com/media/images/coats_of_arms/no.png",
+            "svg": "https://mainfacts.com/media/images/coats_of_arms/no.svg"
+        },
+        "startOfWeek": "monday",
+        "capitalInfo": {
+            "latlng": [
+                59.92,
+                10.75
+            ]
+        },
+        "postalCode": {
+            "format": "####",
+            "regex": "^(\\d{4})$"
+        }
+    },
+    {
+        "name": {
+            "common": "Sweden",
+            "official": "Kingdom of Sweden",
+            "nativeName": {
+                "swe": {
+                    "official": "Konungariket Sverige",
+                    "common": "Sverige"
+                }
+            }
+        },
+        "tld": [
+            ".se"
+        ],
+        "cca2": "SE",
+        "ccn3": "752",
+        "cca3": "SWE",
+        "cioc": "SWE",
+        "independent": true,
+        "status": "officially-assigned",
+        "unMember": true,
+        "currencies": {
+            "SEK": {
+                "name": "Swedish krona",
+                "symbol": "kr"
+            }
+        },
+        "idd": {
+            "root": "+4",
+            "suffixes": [
+                "6"
+            ]
+        },
+        "capital": [
+            "Stockholm"
+        ],
+        "altSpellings": [
+            "SE",
+            "Kingdom of Sweden",
+            "Konungariket Sverige"
+        ],
+        "region": "Europe",
+        "subregion": "Northern Europe",
+        "languages": {
+            "swe": "Swedish"
+        },
+        "translations": {
+            "ara": {
+                "official": "مملكة السويد",
+                "common": "السويد"
+            },
+            "bre": {
+                "official": "Rouantelezh Sveden",
+                "common": "Sveden"
+            },
+            "ces": {
+                "official": "Švédské království",
+                "common": "Švédsko"
+            },
+            "cym": {
+                "official": "Kingdom of Sweden",
+                "common": "Sweden"
+            },
+            "deu": {
+                "official": "Königreich Schweden",
+                "common": "Schweden"
+            },
+            "est": {
+                "official": "Rootsi Kuningriik",
+                "common": "Rootsi"
+            },
+            "fin": {
+                "official": "Ruotsin kuningaskunta",
+                "common": "Ruotsi"
+            },
+            "fra": {
+                "official": "Royaume de Suède",
+                "common": "Suède"
+            },
+            "hrv": {
+                "official": "Kraljevina Švedska",
+                "common": "Švedska"
+            },
+            "hun": {
+                "official": "Svéd Királyság",
+                "common": "Svédország"
+            },
+            "ita": {
+                "official": "Regno di Svezia",
+                "common": "Svezia"
+            },
+            "jpn": {
+                "official": "スウェーデン王国",
+                "common": "スウェーデン"
+            },
+            "kor": {
+                "official": "스웨덴 왕국",
+                "common": "스웨덴"
+            },
+            "nld": {
+                "official": "Koninkrijk Zweden",
+                "common": "Zweden"
+            },
+            "per": {
+                "official": "پادشاهی سوئد",
+                "common": "سوئد"
+            },
+            "pol": {
+                "official": "Królestwo Szwecji",
+                "common": "Szwecja"
+            },
+            "por": {
+                "official": "Reino da Suécia",
+                "common": "Suécia"
+            },
+            "rus": {
+                "official": "Королевство Швеция",
+                "common": "Швеция"
+            },
+            "slk": {
+                "official": "Švédske kráľovstvo",
+                "common": "Švédsko"
+            },
+            "spa": {
+                "official": "Reino de Suecia",
+                "common": "Suecia"
+            },
+            "srp": {
+                "official": "Краљевина Шведска",
+                "common": "Шведска"
+            },
+            "swe": {
+                "official": "Konungariket Sverige",
+                "common": "Sverige"
+            },
+            "tur": {
+                "official": "İsveç Krallığı",
+                "common": "İsveç"
+            },
+            "urd": {
+                "official": "مملکتِ سویڈن",
+                "common": "سویڈن"
+            },
+            "zho": {
+                "official": "瑞典王国",
+                "common": "瑞典"
+            }
+        },
+        "latlng": [
+            62.0,
+            15.0
+        ],
+        "landlocked": false,
+        "borders": [
+            "FIN",
+            "NOR"
+        ],
+        "area": 450295.0,
+        "demonyms": {
+            "eng": {
+                "f": "Swedish",
+                "m": "Swedish"
+            },
+            "fra": {
+                "f": "Suédoise",
+                "m": "Suédois"
+            }
+        },
+        "flag": "\uD83C\uDDF8\uD83C\uDDEA",
+        "maps": {
+            "googleMaps": "https://goo.gl/maps/iqygE491ADVgnBW39",
+            "openStreetMaps": "https://www.openstreetmap.org/relation/52822"
+        },
+        "population": 10353442,
+        "gini": {
+            "2018": 30.0
+        },
+        "fifa": "SWE",
+        "car": {
+            "signs": [
+                "S"
+            ],
+            "side": "right"
+        },
+        "timezones": [
+            "UTC+01:00"
+        ],
+        "continents": [
+            "Europe"
+        ],
+        "flags": {
+            "png": "https://flagcdn.com/w320/se.png",
+            "svg": "https://flagcdn.com/se.svg",
+            "alt": "The flag of Sweden has a blue field with a large golden-yellow cross that extend to the edges of the field. The vertical part of this cross is offset towards the hoist side."
+        },
+        "coatOfArms": {
+            "png": "https://mainfacts.com/media/images/coats_of_arms/se.png",
+            "svg": "https://mainfacts.com/media/images/coats_of_arms/se.svg"
+        },
+        "startOfWeek": "monday",
+        "capitalInfo": {
+            "latlng": [
+                59.33,
+                18.05
+            ]
+        },
+        "postalCode": {
+            "format": "SE-### ##",
+            "regex": "^(?:SE)*(\\d{5})$"
+        }
+    },
+    {
+        "name": {
+            "common": "Finland",
+            "official": "Republic of Finland",
+            "nativeName": {
+                "fin": {
+                    "official": "Suomen tasavalta",
+                    "common": "Suomi"
+                },
+                "swe": {
+                    "official": "Republiken Finland",
+                    "common": "Finland"
+                }
+            }
+        },
+        "tld": [
+            ".fi"
+        ],
+        "cca2": "FI",
+        "ccn3": "246",
+        "cca3": "FIN",
+        "cioc": "FIN",
+        "independent": true,
+        "status": "officially-assigned",
+        "unMember": true,
+        "currencies": {
+            "EUR": {
+                "name": "Euro",
+                "symbol": "€"
+            }
+        },
+        "idd": {
+            "root": "+3",
+            "suffixes": [
+                "58"
+            ]
+        },
+        "capital": [
+            "Helsinki"
+        ],
+        "altSpellings": [
+            "FI",
+            "Suomi",
+            "Republic of Finland",
+            "Suomen tasavalta",
+            "Republiken Finland"
+        ],
+        "region": "Europe",
+        "subregion": "Northern Europe",
+        "languages": {
+            "fin": "Finnish",
+            "swe": "Swedish"
+        },
+        "translations": {
+            "ara": {
+                "official": "جمهورية فنلندا",
+                "common": "فنلندا"
+            },
+            "bre": {
+                "official": "Republik Finland",
+                "common": "Finland"
+            },
+            "ces": {
+                "official": "Finská republika",
+                "common": "Finsko"
+            },
+            "cym": {
+                "official": "Republic of Finland",
+                "common": "Finland"
+            },
+            "deu": {
+                "official": "Republik Finnland",
+                "common": "Finnland"
+            },
+            "est": {
+                "official": "Soome Vabariik",
+                "common": "Soome"
+            },
+            "fin": {
+                "official": "Suomen tasavalta",
+                "common": "Suomi"
+            },
+            "fra": {
+                "official": "République de Finlande",
+                "common": "Finlande"
+            },
+            "hrv": {
+                "official": "Republika Finska",
+                "common": "Finska"
+            },
+            "hun": {
+                "official": "Finn Köztársaság",
+                "common": "Finnország"
+            },
+            "ita": {
+                "official": "Repubblica di Finlandia",
+                "common": "Finlandia"
+            },
+            "jpn": {
+                "official": "フィンランド共和国",
+                "common": "フィンランド"
+            },
+            "kor": {
+                "official": "핀란드 공화국",
+                "common": "핀란드"
+            },
+            "nld": {
+                "official": "Republiek Finland",
+                "common": "Finland"
+            },
+            "per": {
+                "official": "جمهوری فنلاند",
+                "common": "فنلاند"
+            },
+            "pol": {
+                "official": "Republika Finlandii",
+                "common": "Finlandia"
+            },
+            "por": {
+                "official": "República da Finlândia",
+                "common": "Finlândia"
+            },
+            "rus": {
+                "official": "Финляндская Республика",
+                "common": "Финляндия"
+            },
+            "slk": {
+                "official": "Fínska republika",
+                "common": "Fínsko"
+            },
+            "spa": {
+                "official": "República de Finlandia",
+                "common": "Finlandia"
+            },
+            "srp": {
+                "official": "Република Финска",
+                "common": "Финска"
+            },
+            "swe": {
+                "official": "Republiken Finland",
+                "common": "Finland"
+            },
+            "tur": {
+                "official": "Finlandiya Cumhuriyeti",
+                "common": "Finlandiya"
+            },
+            "urd": {
+                "official": "جمہوریہ فن لینڈ",
+                "common": "فن لینڈ"
+            },
+            "zho": {
+                "official": "芬兰共和国",
+                "common": "芬兰"
+            }
+        },
+        "latlng": [
+            64.0,
+            26.0
+        ],
+        "landlocked": false,
+        "borders": [
+            "NOR",
+            "SWE",
+            "RUS"
+        ],
+        "area": 338424.0,
+        "demonyms": {
+            "eng": {
+                "f": "Finnish",
+                "m": "Finnish"
+            },
+            "fra": {
+                "f": "Finlandaise",
+                "m": "Finlandais"
+            }
+        },
+        "flag": "\uD83C\uDDEB\uD83C\uDDEE",
+        "maps": {
+            "googleMaps": "https://goo.gl/maps/HjgWDCNKRAYHrkMn8",
+            "openStreetMaps": "openstreetmap.org/relation/54224"
+        },
+        "population": 5530719,
+        "gini": {
+            "2018": 27.3
+        },
+        "fifa": "FIN",
+        "car": {
+            "signs": [
+                "FIN"
+            ],
+            "side": "right"
+        },
+        "timezones": [
+            "UTC+02:00"
+        ],
+        "continents": [
+            "Europe"
+        ],
+        "flags": {
+            "png": "https://flagcdn.com/w320/fi.png",
+            "svg": "https://flagcdn.com/fi.svg",
+            "alt": "The flag of Finland has a white field with a large blue cross that extend to the edges of the field. The vertical part of this cross is offset towards the hoist side."
+        },
+        "coatOfArms": {
+            "png": "https://mainfacts.com/media/images/coats_of_arms/fi.png",
+            "svg": "https://mainfacts.com/media/images/coats_of_arms/fi.svg"
+        },
+        "startOfWeek": "monday",
+        "capitalInfo": {
+            "latlng": [
+                60.17,
+                24.93
+            ]
+        },
+        "postalCode": {
+            "format": "#####",
+            "regex": "^(?:FI)*(\\d{5})$"
+        }
+    }
+]

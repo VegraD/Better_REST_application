@@ -25,7 +25,6 @@ func OpenFile(path string) (*os.File, error) {
 }
 
 // CloseFile is a wrapper function for closing a file. Could be used with defer for cleaner code.
-// TODO: Add proper error handling
 func CloseFile(file *os.File) {
 	err := file.Close()
 	if err != nil {
