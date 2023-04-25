@@ -2,11 +2,8 @@ package firestore
 
 import (
 	"cloud.google.com/go/firestore"
-	"context"
-	firebase "firebase.google.com/go"
 	"fmt"
 	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
 	"io"
 	"log"
 	"net/http"
@@ -109,37 +106,4 @@ func displayDocuments(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-}
-
-/*
-func handleMessage(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		addDocument(w, r)
-	case http.MethodGet:
-		displayDocuments(w, r)
-	default:
-		http.Error(w, "Unsupported request method", http.StatusMethodNotAllowed)
-		return
-	}
-}
-
-*/
-
-func firebaseAndClientInit() {
-	// Firebase initialisation
-	ctx = context.Background()
-
-	opt := option.WithCredentialsFile("./assignment-2-key.json")
-	app, err := firebase.NewApp(ctx, nil, opt)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	//Instantiate client
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 }
