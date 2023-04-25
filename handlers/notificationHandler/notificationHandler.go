@@ -108,14 +108,17 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := firestore.WebhookAddition(webhookR.Url, webhookR.Country, webhookR.CallS)
+	/*
+		id, err := firestore.WebhookAddition(webhookR.Url, webhookR.Country, webhookR.CallS)
 
-	if err != nil {
-		http.Error(w, "couldnt add webhook to server", http.StatusInternalServerError)
-	}
+		if err != nil {
+			http.Error(w, "couldnt add webhook to server", http.StatusInternalServerError)
+		}
+
+	*/
 
 	// Append webhook to database
-	//Db = append(Db, webhookR)
+	Db = append(Db, webhookR)
 
 	//TODO: do this smoother, what if encoder fails??
 
@@ -123,7 +126,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	// encode response into JSON format
-	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: id})
+	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID /*id*/})
 
 	if err != nil {
 		http.Error(w, "error during response decoding", http.StatusInternalServerError)
