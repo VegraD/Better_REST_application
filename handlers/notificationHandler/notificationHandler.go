@@ -2,6 +2,7 @@ package notificationHandler
 
 import (
 	"assignment-2/structs"
+	"assignment-2/webhooks"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -29,6 +30,7 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
+	webhooks.WebhookHandler(w, r, db)
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
 
@@ -65,6 +67,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
+	//webhooks.WebhookHandler(w, r, db)
 	webhook := structs.WebHookRequest{}
 
 	w.Header().Add("content-type", "application/json")
