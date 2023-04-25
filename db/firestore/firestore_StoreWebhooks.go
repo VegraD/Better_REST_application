@@ -1,4 +1,4 @@
-package utils
+package firestore
 
 import (
 	"cloud.google.com/go/firestore"
@@ -10,16 +10,11 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 )
 
-// Firebase context and client used by Firestore functions throughout the program.
-var ctx context.Context
-var client *firestore.Client
-
 // Collection name in Firestore
-const collection = "messages"
+const collection = "webhooks"
 
 var ct = 0
 
@@ -116,6 +111,7 @@ func displayDocuments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
 func handleMessage(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
@@ -127,6 +123,8 @@ func handleMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+*/
 
 func firebaseAndClientInit() {
 	// Firebase initialisation
@@ -142,29 +140,6 @@ func firebaseAndClientInit() {
 	client, err := app.Firestore(ctx)
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	//Close down client
-	defer func() {
-		err := client.Close()
-		if err != nil {
-			log.Fatal("Closing of the firebase client failed. Error: ", err)
-		}
-	}()
-
-	// Make it Heroku-compatible
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	addr := ":" + port
-
-	http.HandleFunc("/messages", handleMessage) // Be forgiving in case people forget the trailing slash ('/')
-	http.HandleFunc("/messages/", handleMessage)
-	log.Printf("Firestore REST service listening on %s ...\n", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
-		panic(err)
 	}
 
 }
