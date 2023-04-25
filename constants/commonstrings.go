@@ -10,3 +10,8 @@ const (
 
 	CurrentYear string = "-1"
 )
+
+// Common error messages
+const (
+	CheckURL string = ": Check that you entered the correct URL!"
+)
