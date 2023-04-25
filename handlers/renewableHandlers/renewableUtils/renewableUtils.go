@@ -151,8 +151,9 @@ func convertYearToInt(params structs.URLParams) (int, int, error) {
 	return beginYear, endYear, nil
 }
 
-// getMinMaxYear finds the minimum and maximum year in the dataset.
-func getMinMaxYear(countries []structs.CountryInfo) (int, int) {
+// GetMinMaxYear finds the minimum and maximum year in the dataset.
+// TODO: Have made public. Consider splitting this function to have lower cohesion in code
+func GetMinMaxYear(countries []structs.CountryInfo) (int, int) {
 	// sort the countries by year, then return the first and last element
 	sort.Slice(countries, func(i, j int) bool {
 		return countries[i].Year < countries[j].Year
