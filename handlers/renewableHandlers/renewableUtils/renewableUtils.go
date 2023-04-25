@@ -22,7 +22,7 @@ func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 	}
 
 	// Get data for the specified country
-	countryData, err := getSpecifiedCountry(countries, params)
+	countryData, err := GetSpecifiedCountry(countries, params)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
