@@ -50,6 +50,7 @@ type RegisteredWebHook struct {
 	Url       string `json:"url"`
 	Country   string `json:"country"`
 	CallS     int    `json:"calls"`
+	Count     int    `json:"count"`
 }
 
 type WebHookRequest struct {
