@@ -71,7 +71,7 @@ func AllCountriesResponse(w http.ResponseWriter, params structs.URLParams) {
 	sortByValue(params.SortByValue, filteredCountriesMean)
 
 	// Write the response
-	writeJSONResponse(w, filteredCountriesMean)
+	json_coder.PrettyPrint(w, filteredCountriesMean)
 }
 
 // NeighboursResponse gives a response with the data for the specified country and its neighbours.
