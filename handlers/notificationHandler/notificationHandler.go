@@ -29,7 +29,7 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
-	//webhooks.WebhookHandler(w, r, Db)
+
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
 
@@ -67,7 +67,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
-	//webhooks.WebhookHandler(w, r, Db)
+
 	webhook := structs.WebHookRequest{}
 
 	w.Header().Add("content-type", "application/json")
