@@ -139,6 +139,7 @@ func requestToRegistered(request structs.WebHookRequest, id string) (structs.Reg
 		Url:       fmt.Sprintf(request.URL),
 		Country:   fmt.Sprintf(request.Country),
 		CallS:     request.Calls,
+		Count:     0,
 	}, nil
 }
 
