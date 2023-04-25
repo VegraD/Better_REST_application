@@ -62,3 +62,9 @@ type WebHookRequest struct {
 type WebHookIDResponse struct {
 	WebhookID string `json:"webhook_id"`
 }
+
+type WebHookInvocationResponse struct {
+	WebhookID string `json:"webhook_id"`
+	Country   string `json:"country"`
+	Calls     int    `json:"calls"`
+}
