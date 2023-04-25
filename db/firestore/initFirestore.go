@@ -38,10 +38,11 @@ func InitFirestore() error {
 	return nil
 }
 
+/*
 func handleMessage(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		addDocument(w, r)
+		(w, r)
 	case http.MethodGet:
 		displayDocuments(w, r)
 	default:
@@ -50,7 +51,9 @@ func handleMessage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func main() {
+*/
+
+func initFirestoreDatabase() {
 	// Make it Heroku-compatible
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -59,8 +62,8 @@ func main() {
 
 	addr := ":" + port
 
-	http.HandleFunc("/messages", handleMessage) // Be forgiving in case people forget the trailing slash ('/')
-	http.HandleFunc("/messages/", handleMessage)
+	//http.HandleFunc("/messages", handleMessage) // Be forgiving in case people forget the trailing slash ('/')
+	//http.HandleFunc("/messages/", handleMessage)
 	log.Printf("Firestore REST service listening on %s ...\n", addr)
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		panic(err)
