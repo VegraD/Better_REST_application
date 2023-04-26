@@ -11,18 +11,10 @@ type CountryInfo struct {
 
 type Status struct {
 	CountriesApi   string `json:"countries_api"`
-	RenewablesApi  string `json:"renewable_api"`
 	NotificationDB string `json:"notification_db"`
 	Webhooks       string `json:"webhooks"`
 	Version        string `json:"version"`
 	Uptime         string `json:"uptime"`
-}
-
-type Renewables struct {
-	Entity     string
-	Code       string
-	Year       int
-	Renewables float64
 }
 
 type URLParams struct {
@@ -35,7 +27,6 @@ type URLParams struct {
 }
 
 type Border struct {
-	Cca3    string   `json:"cca3"`
 	Borders []string `json:"borders"`
 }
 
