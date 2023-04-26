@@ -106,7 +106,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idToSet := validateAndSetID()
+	// idToSet := validateAndSetID()
 
 	if err != nil {
 		http.Error(w, "cannot set id for webhook", http.StatusBadRequest)
@@ -114,7 +114,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Change struct into RegisteredWebHook and set ID
-	webhookR, err := requestToRegistered(webhook, idToSet)
+	// webhookR, err := requestToRegistered(webhook, idToSet)
 
 	if err != nil {
 		http.Error(w, "error during JSON request translation", http.StatusInternalServerError)
@@ -122,7 +122,7 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Add webhook to firestore database
-	id, err := database.AddWebhook(webhookR.Url, webhookR.Country, webhookR.CallS)
+	id, err := database.AddWebhook(webhook.URL, webhook.Country, webhook.Calls)
 
 	// throw error if webhook cannot be added to database
 	if err != nil {
