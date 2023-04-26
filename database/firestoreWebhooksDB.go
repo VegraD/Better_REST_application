@@ -21,9 +21,6 @@ func AddWebhook(url string, country string, noCalls int) (string, error) {
 	response := client.Collection(collection).Doc(webhookId)
 	_, err := response.Get(ctx)
 
-	if err != nil {
-		return "", errors.New("webhooks already exist")
-	}
 	_, err = response.Set(ctx, map[string]interface{}{
 		"webhookId": webhookId,
 		"url":       url,
