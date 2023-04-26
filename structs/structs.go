@@ -34,12 +34,19 @@ type Border struct {
 
 // ################################################## Webhook structs ##################################################
 
-type RegisteredWebHook struct {
+type RegisteredWebhook struct {
 	WebHookID string `json:"webhook_id"`
-	Url       string `json:"url"`
+	URL       string `json:"url"`
 	Country   string `json:"country"`
-	CallS     int    `json:"calls"`
+	Calls     int    `json:"calls"`
 	Count     int    `json:"count"`
+}
+
+type DisplayWebhook struct {
+	WebHookID string `json:"webhook_id"`
+	URL       string `json:"url"`
+	Country   string `json:"country"`
+	Calls     int    `json:"calls"`
 }
 
 type WebHookRequest struct {
