@@ -35,3 +35,11 @@ func closeDB() error {
 	}
 	return nil
 }
+
+func GetClient() *firestore.Client {
+	return client
+}
+
+func GetContext() context.Context {
+	return ctx
+}
