@@ -1,4 +1,4 @@
-package utils
+package hashing_utility
 
 import (
 	"crypto/hmac"
@@ -8,11 +8,7 @@ import (
 )
 
 func HashingTheWebhook(url string, country string, calls int) string {
-	hash := hmac.New(sha256.New, getHashSecret())
+	hash := hmac.New(sha256.New, getSecret())
 	hash.Write([]byte(fmt.Sprintf("%s%s%d", url, country, calls)))
 	return hex.EncodeToString(hash.Sum(nil))
-}
-
-func getHashSecret() []byte {
-	return nil
 }
