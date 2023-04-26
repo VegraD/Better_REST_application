@@ -368,4 +368,37 @@ Response:
     ...
 ]
 ```
+## Service Compilation requirements
+
+---
+
+There are some files needed for the application to compile and work.
+
+#### Firestore service account key
+
+Name of key: `assignment-2-key.json`
+
+Location: `/assignment-2/assignment-2-key.json`
+
+#### Hashing Secret
+
+Filename: `hashingSecret.go`
+
+Location: `/assignment-2/utils/hashing-utility/hashingSecret.go`
+
+Where the content of the file is to be: 
+
+```
+package hashing_utility
+
+
+var secret = []byte("WRITE-YOUR-SECRET-HERE")
+
+func getSecret() []byte {
+	return secret
+}
+```
+
+
+
 

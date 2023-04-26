@@ -2,13 +2,6 @@ package structs
 
 // TODO: We should consider separating the structs into different files if we get many structs.
 
-type CountryInfo struct {
-	Country    string  `json:"name"`
-	IsoCode    string  `json:"isoCode"`
-	Year       int     `json:"year,omitempty"`
-	Percentage float32 `json:"percentage"`
-}
-
 type Status struct {
 	CountriesApi   string `json:"countries_api"`
 	NotificationDB string `json:"notification_db"`
@@ -24,6 +17,15 @@ type URLParams struct {
 	SortByValue bool
 	Neighbours  bool
 	EndPoint    string
+}
+
+// ################################################## Country structs ##################################################
+
+type CountryInfo struct {
+	Country    string  `json:"name"`
+	IsoCode    string  `json:"isoCode"`
+	Year       int     `json:"year,omitempty"`
+	Percentage float32 `json:"percentage"`
 }
 
 type Border struct {
