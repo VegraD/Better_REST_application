@@ -70,11 +70,3 @@ func initFirestoreDatabase() {
 	}
 
 }
-
-func GetClient() *firestore.Client {
-	return client
-}
-
-func GetContext() context.Context {
-	return ctx
-}
