@@ -38,7 +38,9 @@ func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 
 	// Sort the data by percentage of renewable energy production if sortByValue is true
 	sortByValue(params.SortByValue, countryData)
-	webhooks.InvokeWebhook(w, params.Country)
+
+	// Check and invoke webhooks
+	webhooks.InvokeWebhook(params.Country)
 	// Write response
 	json_coder.PrettyPrint(w, countryData)
 }
@@ -70,6 +72,9 @@ func AllCountriesResponse(w http.ResponseWriter, params structs.URLParams) {
 
 	// Sort the data by percentage if sortByValue is true
 	sortByValue(params.SortByValue, filteredCountriesMean)
+
+	// check and invoke webhooks
+	webhooks.InvokeWebhook(params.Country)
 
 	// Write the response
 	json_coder.PrettyPrint(w, filteredCountriesMean)
