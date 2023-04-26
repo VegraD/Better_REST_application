@@ -2,6 +2,12 @@ package constants
 
 const Version string = "v1"
 
+// MarkdownConverter related constants
+const (
+	ReadmeHtml       string = "<head><meta charset=\"UTF-8\"><link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"></head><body>%s</body>"
+	MdConvertPostReq string = `{"text": "Status"}`
+)
+
 // Constants for URL parameters
 const (
 	NullString        string = "null"
