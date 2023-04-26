@@ -63,7 +63,7 @@ func parseCountriesCsv(records [][]string) ([]structs.CountryInfo, error) {
 	for _, record := range records {
 		// TODO: Are there better ways to handle the header row?
 		// Skip the header row and  all geographical regions
-		if record[0] == "Entity" || record[1] == "" {
+		if record[0] == "Entity" || len(record[1]) != 3 {
 			continue
 		}
 
