@@ -23,30 +23,30 @@ func InvokeWebhook(country string) error {
 	if country == "" {
 		for _, v := range webhooks {
 			v.Count = v.Count + 1
-			if v.CallS <= v.Count {
+			if v.Calls <= v.Count {
 				v.Count = 0
 
 				go callURL(http.MethodPost, v)
 			}
-			_, err = database.UpdateWebhooks(v.Url, v.Country, v.CallS, v.Count)
+			_, err = database.UpdateWebhooks(v.URL, v.Country, v.Calls, v.Count)
 		}
 	}
 	for _, v := range webhooks {
 		if v.Country == country {
 			v.Count = v.Count + 1
-			if v.CallS <= v.Count {
+			if v.Calls <= v.Count {
 				v.Count = 0
 
 				go callURL(http.MethodPost, v)
 			}
-			_, err = database.UpdateWebhooks(v.Url, v.Country, v.CallS, v.Count)
+			_, err = database.UpdateWebhooks(v.URL, v.Country, v.Calls, v.Count)
 		}
 	}
 	return nil
 }
 
 // TODO: add functionality for incrementing calls
-func callURL(method string, webhook structs.RegisteredWebHook) error {
+func callURL(method string, webhook structs.RegisteredWebhook) error {
 
 	response := registeredToResponse(webhook)
 
@@ -56,7 +56,7 @@ func callURL(method string, webhook structs.RegisteredWebHook) error {
 		return errors.New("unable to marshal content")
 	}
 
-	req, err := http.NewRequest(method, webhook.Url, bytes.NewReader(body))
+	req, err := http.NewRequest(method, webhook.URL, bytes.NewReader(body))
 	if err != nil {
 		return errors.New("unable to create request")
 	}
@@ -72,17 +72,17 @@ func callURL(method string, webhook structs.RegisteredWebHook) error {
 		return errors.New("error fetching response body")
 	}
 
-	log.Println("Webhook " + webhook.Url + " invoked. Received status code " + strconv.Itoa(res.StatusCode) +
+	log.Println("Webhook " + webhook.URL + " invoked. Received status code " + strconv.Itoa(res.StatusCode) +
 		" and body: " + string(resp))
 
 	return nil
 }
 
-func registeredToResponse(registered structs.RegisteredWebHook) structs.WebHookInvocationResponse {
+func registeredToResponse(registered structs.RegisteredWebhook) structs.WebHookInvocationResponse {
 
 	return structs.WebHookInvocationResponse{
 		WebhookID: fmt.Sprintf(registered.WebHookID),
 		Country:   fmt.Sprintf(registered.Country),
-		Calls:     registered.CallS,
+		Calls:     registered.Calls,
 	}
 }

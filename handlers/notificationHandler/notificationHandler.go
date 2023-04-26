@@ -174,12 +174,12 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "no valid webhook found", http.StatusNotModified)
 }
 
-func registeredToDisplayable(webhook structs.RegisteredWebHook) structs.DisplayWebHook {
+func registeredToDisplayable(webhook structs.RegisteredWebhook) structs.DisplayWebhook {
 
-	return structs.DisplayWebHook{
+	return structs.DisplayWebhook{
 		WebHookID: fmt.Sprintf(webhook.WebHookID),
-		Url:       fmt.Sprintf(webhook.Url),
+		URL:       fmt.Sprintf(webhook.URL),
 		Country:   fmt.Sprintf(webhook.Country),
-		CallS:     webhook.CallS,
+		Calls:     webhook.Calls,
 	}
 }
