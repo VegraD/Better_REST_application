@@ -13,5 +13,7 @@ const (
 
 // Common error messages
 const (
-	CheckURL string = ": Check that you entered the correct URL!"
+	CheckURLErr    string = ": Check that you entered the correct URL!"
+	MarshallingErr string = "Error during marshalling: "
+	PrettyPrintErr string = "Error during pretty printing: "
 )
