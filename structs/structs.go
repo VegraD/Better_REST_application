@@ -3,11 +3,12 @@ package structs
 // TODO: We should consider separating the structs into different files if we get many structs.
 
 type Status struct {
-	CountriesApi   string `json:"countries_api"`
-	NotificationDB string `json:"notification_db"`
-	Webhooks       string `json:"webhooks"`
-	Version        string `json:"version"`
-	Uptime         string `json:"uptime"`
+	CountriesApi    string `json:"countries_api"`
+	MarkdownHtmlApi string `json:"markdown_html_api"`
+	NotificationDB  string `json:"notification_db"`
+	Webhooks        string `json:"webhooks"`
+	Version         string `json:"version"`
+	Uptime          string `json:"uptime"`
 }
 
 type URLParams struct {
