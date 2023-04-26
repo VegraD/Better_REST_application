@@ -1,4 +1,4 @@
-package firestore
+package database
 
 import (
 	"assignment-2/constants"
@@ -13,10 +13,8 @@ const collection = "webhooks"
 
 var ct = 0
 
-/*
-Reads a string from the body in plain-text and sends it to Firestore to be registered as a document
-*/
-func addWebhook(url string, country string, noCalls int) (string, error) {
+// AddWebhook /*
+func AddWebhook(url string, country string, noCalls int) (string, error) {
 
 	webhookId := hashing_utility.HashingTheWebhook(url, country, noCalls)
 
@@ -39,7 +37,7 @@ func addWebhook(url string, country string, noCalls int) (string, error) {
 		return webhookId, nil
 	}
 }
-func getAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
+func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	doc, err := getResponse.Get(ctx)
 	if err != nil {
@@ -54,7 +52,7 @@ func getAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
 	return structs.RegisteredWebHook{}, nil
 }
 
-func deletionOfWebhook(webhookID string) error {
+func DeletionOfWebhook(webhookID string) error {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	_, err := getResponse.Get(ctx)
 	if err != nil {
