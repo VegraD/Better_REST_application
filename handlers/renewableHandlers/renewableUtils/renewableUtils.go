@@ -5,6 +5,7 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"assignment-2/webhooks"
 	"errors"
 	"fmt"
 	"net/http"
@@ -37,7 +38,7 @@ func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 
 	// Sort the data by percentage of renewable energy production if sortByValue is true
 	sortByValue(params.SortByValue, countryData)
-
+	webhooks.InvokeWebhook(w, params.Country)
 	// Write response
 	json_coder.PrettyPrint(w, countryData)
 }
