@@ -11,8 +11,6 @@ import (
 // Collection name in Firestore
 var collection = "webhooks"
 
-var ct = 0
-
 // AddWebhook /*
 func AddWebhook(url string, country string, noCalls int) (string, error) {
 
@@ -138,7 +136,7 @@ func getWebhookAmount() (int, error) {
 }
 
 /*
-	Function for clearing the database of potential webhooks
+Function for clearing the database of potential webhooks
 */
 func ClearDB() {
 	db, _ := GetAllWebhooks()
@@ -149,7 +147,7 @@ func ClearDB() {
 }
 
 /*
-	A function for setting up a test database
+A function for setting up a test database
 */
 func TestDatabaseSetup() []string {
 	collection = "testing"
