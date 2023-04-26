@@ -11,6 +11,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ser
 
 EXPOSE 8080
 
+WORKDIR /go/src/app
+
 # Instantiate server
-CMD ["./server"]
+CMD ["./cmd/server"]
 
