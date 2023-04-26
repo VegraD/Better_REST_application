@@ -1,6 +1,7 @@
 package webhooks
 
 import (
+	"assignment-2/database"
 	"assignment-2/structs"
 	"bytes"
 	"encoding/json"
@@ -12,10 +13,13 @@ import (
 	"strconv"
 )
 
-/*
 // TODO: implement with persistent storage
-func InvokeWebhook(w http.ResponseWriter, country string) {
-	webhooks := notificationHandler.Db
+func InvokeWebhook(w http.ResponseWriter, country string) error {
+	webhooks, err := database.GetAllWebhooks()
+
+	if err != nil {
+		return errors.New("Webhooks is empty")
+	}
 
 	for _, v := range webhooks {
 		if v.Country == country {
@@ -25,11 +29,11 @@ func InvokeWebhook(w http.ResponseWriter, country string) {
 
 				go callURL(http.MethodPost, v)
 			}
+			_, err = database.UpdateWebhooks(v.Url, v.Country, v.CallS, v.Count)
 		}
 	}
+	return nil
 }
-
-*/
 
 // TODO: add functionality for incrementing calls
 func callURL(method string, webhook structs.RegisteredWebHook) error {
