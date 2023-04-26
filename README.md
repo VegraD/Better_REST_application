@@ -33,10 +33,123 @@ The alternative form is as follows:
 - Current percentage of renewables: `/energy/v1/renewables/current/{country?}/{bool?}`
 - Historical percentage of renewables: `/energy/v1/renewables/history/{country?}/{year?}/{year?}/{bool?}`
 
+***Note:*** All renewable endpoints are case-insensitive, so all parameter and values can be entered in any case.
+
 
 ##  - Current percentage of renewables endpoint
 
 ---
+### Description 
+
+The current percentage of renewables endpoint focuses on returning the current percentage of renewables in the energy
+mix, for individual or selections of countries. It is possible to get one country, one country with its
+neighbours, or all countries in the dataset.
+
+### - Request
+```
+Method: GET
+Path: /energy/v1/renewables/current/{country?}{neighbours=bool?}
+
+or the alternate form which should work in the same way as the above:
+
+Path: /energy/v1/renewables/current/country/bool
+```
+There are two optional parameters that can be used to filter the results:
+- `country`: The country for which the current percentage of renewables should be returned. The country must either be
+  It can be omitted completely, be written as a three-letter country code, or as the full name of the country. If no
+  country is specified, the data for all countries is returned.
+- `neighbours`: A boolean value indicating whether the results should include the neighbours of the specified country.
+  If no value is specified, the neighbours are not included.
+
+### - Response
+
+The response is a JSON object containing the current percentage of renewables for the specified country, or all
+countries if no country is specified. The data is returned as an array of objects, each containing the following
+fields:
+
+The responese differs depending on whether the country parameter is specified or not. If no country is specified, the
+api will return all countries in the dataset, and the neighbours field will be omitted.
+
+Example request: http://localhost:8080/energy/v1/renewables/current/nor
+
+Will return the current percentage of renewables for Norway.
+
+***Note:*** As Türkiye is recently changed it name from Turkey, the dataset is not updated to reflect this change. Therefore
+it is needed to use the old name for Türkiye, which is Turkey, in order to get the correct data for this country.  
+*Altenatively:* the three-letter country code can be used, which is TUR.
+
+```
+[
+    {
+        "name": "Norway",
+        "isoCode": "NOR",
+        "year": 2021,
+        "percentage": 71.558365
+    }
+]
+```   
+
+- Example request: http://localhost:8080/energy/v1/renewables/current/nor?neighbours=true
+- alternative form: http://localhost:8080/energy/v1/renewables/current/nor/true
+
+Both examples will return the current percentage of renewables for Norway and its bordering countries.
+```
+[
+    {
+        "name": "Norway",
+        "isoCode": "NOR",
+        "year": 2021,
+        "percentage": 71.558365
+    },
+    {
+        "name": "Finland",
+        "isoCode": "FIN",
+        "year": 2021,
+        "percentage": 41.666668
+    },
+    {
+        "name": "Russia",
+        "isoCode": "RUS",
+        "year": 2021,
+        "percentage": 17.857143
+    },
+    {
+        "name": "Sweden",
+        "isoCode": "SWE",
+        "year": 2021,
+        "percentage": 57.142857
+    }
+]
+```
+---
+Example request: http://localhost:8080/energy/v1/renewables/current/
+
+Will return the current percentage for all countries in dataset.
+```
+[
+{
+"name": "Algeria",
+"isoCode": "DZA",
+"year": 2021,
+"percentage": 0.26136735
+},
+{
+"name": "Argentina",
+"isoCode": "ARG",
+"year": 2021,
+"percentage": 11.329249
+},
+...
+{
+"name": "Vietnam",
+"isoCode": "VNM",
+"year": 2021,
+"percentage": 22.734407
+}
+]
+```
+
+
 
 
 
@@ -78,7 +191,6 @@ The response differs depending on whether the country parameter is specified or 
 year field is omitted, and the percentage field will display the mean percentage of renewables in the energy mix for
 all countries in the specified time period.
 
-***Note:*** The endpoint is case-insensitive, so the country parameter can be entered in any case.
 
 Example request: http://localhost:8080/energy/v1/renewables/history/?country=nor
 
