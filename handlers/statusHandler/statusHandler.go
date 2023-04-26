@@ -5,39 +5,59 @@ import (
 	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"assignment-2/utils"
+	"bytes"
+	"io"
 	"log"
 	"net/http"
 )
 
-/*
-DiagnosticHandler is for redirecting the http request. it curently only support get requests.
-*/
+// StatusHandler is for redirecting the http request. it currently only supports get requests.
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == http.MethodGet {
+	switch r.Method {
+	case http.MethodGet:
 		handleStatusRequest(w, r)
-	} else {
+	default:
 		http.Error(w, "REST Method '"+r.Method+"' not supported. Currently only '"+http.MethodGet+
 			"' is supported.", http.StatusNotImplemented)
-		return
 	}
 }
 
+// getApiStatus is a method to check the status for the apis that is used
 func getApiStatus(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error in get request to %s: %s", url, err)
 	}
 	return resp.Status
 }
 
-/*
-handleStatusRequest is a method to check the status for the apis that is used
-in the program, and "pretty print" it to the user.
-*/
+// getMarkdownApiStatus The markdown api does not accept any get requests, so this function will send a post request with a markdown
+// string to the api, and return the status of the response.
+func getMarkdownApiStatus(url string) string {
+
+	payload := []byte(constants.MdConvertPostReq)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		log.Printf("Error in post request to %s: %s", url, err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Printf("Error in closing body: %s", err)
+		}
+	}(resp.Body)
+
+	return resp.Status
+}
+
+// handleStatusRequest is a method to check the status for the apis that is used
+// in the program, and "pretty print" it to the user.
 func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 
 	countryResp := getApiStatus(constants.CountryApi)
+
+	markdownResp := getMarkdownApiStatus(constants.MarkdownToHTMLApi)
 
 	//TODO: Add correct url
 	notificationResp := getApiStatus("https://restcountries.com/")
@@ -45,15 +65,17 @@ func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
 	//TODO: Add correct url
 	webhookResp := getApiStatus("https://restcountries.com/")
 
-	json_coder.PrettyPrint(w, Status(countryResp, notificationResp, webhookResp))
+	json_coder.PrettyPrint(w, Status(countryResp, markdownResp, notificationResp, webhookResp))
 }
 
-func Status(country string, notification string, webhook string) structs.Status {
+// Status is a method to create a status struct
+func Status(country string, markdown, notification string, webhook string) structs.Status {
 	return structs.Status{
-		CountriesApi:   country,
-		NotificationDB: notification,
-		Webhooks:       webhook,
-		Version:        constants.Version,
-		Uptime:         utils.Uptime(),
+		CountriesApi:    country,
+		MarkdownHtmlApi: markdown,
+		NotificationDB:  notification,
+		Webhooks:        webhook,
+		Version:         constants.Version,
+		Uptime:          utils.Uptime(),
 	}
 }
