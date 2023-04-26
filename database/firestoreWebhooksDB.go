@@ -100,3 +100,24 @@ func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
 
 	return webhooks, nil
 }
+
+func UpdateWebhooks(url string, country string, noCalls int, count int) (string, error) {
+
+	webhookId := hashing_utility.HashingTheWebhook(url, country, noCalls)
+
+	response := client.Collection(collection).Doc(webhookId)
+	_, err := response.Get(ctx)
+
+	_, err = response.Set(ctx, map[string]interface{}{
+		"webhookId": webhookId,
+		"url":       url,
+		"country":   country,
+		"calls":     noCalls,
+		"count":     count,
+	})
+	if err != nil {
+		return "", err
+	} else {
+		return webhookId, nil
+	}
+}
