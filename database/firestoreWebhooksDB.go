@@ -5,6 +5,7 @@ import (
 	"assignment-2/structs"
 	"assignment-2/utils/hashing-utility"
 	"errors"
+	"google.golang.org/api/iterator"
 )
 
 // Collection name in Firestore
@@ -65,4 +66,40 @@ func DeletionOfWebhook(webhookID string) error {
 		return nil
 
 	}
+}
+
+func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
+
+	var webhooks []structs.RegisteredWebHook
+
+	collection := GetClient().Collection(collection).Documents(GetContext())
+
+	for {
+
+		wh, err := collection.Next()
+
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		var webhookToAdd structs.RegisteredWebHook
+		err = wh.DataTo(&webhookToAdd)
+
+		if err != nil {
+			return nil, err
+		}
+
+		webhooks = append(webhooks, webhookToAdd)
+
+	}
+
+	if len(webhooks) == 0 {
+		return []structs.RegisteredWebHook{}, errors.New("database is empty")
+	}
+
+	return webhooks, nil
 }
