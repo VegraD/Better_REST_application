@@ -8,6 +8,7 @@ import (
 	"assignment-2/constants"
 	"assignment-2/handlers/defaultHandler"
 	"assignment-2/handlers/notificationHandler"
+	"assignment-2/handlers/readmeHandler"
 	"assignment-2/handlers/renewableHandlers/currentHandler"
 	"assignment-2/handlers/renewableHandlers/historicalHandler"
 	"assignment-2/handlers/statusHandler"
@@ -42,6 +43,8 @@ func main() {
 
 	// Register handlers
 	http.HandleFunc(constants.DefaultEP, defaultHandler.DefaultHandler)
+	http.Handle(constants.StaticEP, http.StripPrefix(constants.StaticEP, http.FileServer(http.Dir("static"))))
+	http.HandleFunc(constants.ReadmeEP, readmeHandler.ReadmeHandler)
 	http.HandleFunc(constants.CurrentEP, currentHandler.CurrentHandler)
 	http.HandleFunc(constants.HistoryEP, historicalHandler.HistoricalHandler)
 	http.HandleFunc(constants.NotificationsEP, notificationHandler.NotificationHandler)

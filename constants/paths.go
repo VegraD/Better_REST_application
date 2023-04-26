@@ -14,17 +14,23 @@ const (
 	// DefaultEP is the default endpoint path.
 	DefaultEP string = "/"
 
+	// StaticEP is the endpoint path for static files.
+	StaticEP string = "/static/"
+
 	// CurrentEP is the endpoint path for retrieving current renewable energy production.
-	CurrentEP = baseEP + "/renewables/current/"
+	CurrentEP = BasePath + "/renewables/current/"
 
 	// HistoryEP is the endpoint path for retrieving historical renewable energy production.
-	HistoryEP = baseEP + "/renewables/history/"
+	HistoryEP = BasePath + "/renewables/history/"
 
 	// NotificationsEP is the endpoint path for retrieving notifications.
-	NotificationsEP = baseEP + "/notifications/"
+	NotificationsEP = BasePath + "/notifications/"
 
 	// StatusEP is the endpoint path for retrieving the status of the application.
-	StatusEP = baseEP + "/status/"
+	StatusEP = BasePath + "/status/"
+
+	// ReadmeEP is the endpoint path for retrieving the readme file.
+	ReadmeEP = BasePath + "/readme/"
 )
 
 // External API paths
@@ -46,11 +52,11 @@ const (
 
 // Base endpoint paths
 const (
-	// baseEP is the base path for all endpoints.
-	baseEP string = "/energy/v1"
+	// BasePath is the base path for all endpoints.
+	BasePath string = "/energy/v1"
 )
 
-// Firestore ServieAccountLocation
+// ServiceAccountLocation Firestore service account location
 const (
 	ServiceAccountLocation string = "./assignment-2-key.json"
 )
