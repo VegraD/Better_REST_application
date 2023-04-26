@@ -1,4 +1,4 @@
-package firestore
+package database
 
 import (
 	"assignment-2/constants"
@@ -6,32 +6,39 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
+	"log"
 )
 
 var ctx context.Context
 var client *firestore.Client
 
-func InitFirestore() error {
+func InitFirestore() {
 	ctx = context.Background()
 
 	sa := option.WithCredentialsFile(constants.ServiceAccountLocation)
 	app, err := firebase.NewApp(ctx, nil, sa)
 	if err != nil {
-		//Bedre ERRORHENALDING HER
-		return err
+		log.Fatalln(err)
 	}
 
-	_, err = app.Firestore(ctx)
+	client, err = app.Firestore(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func CloseDB() error {
+	err := client.Close()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func closeDB() error {
-	err := client.Close()
-	if err != nil {
-		return err
-	}
-	return nil
+func GetClient() *firestore.Client {
+	return client
+}
+
+func GetContext() context.Context {
+	return ctx
 }

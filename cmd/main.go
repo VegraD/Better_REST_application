@@ -6,6 +6,7 @@ package main
 
 import (
 	"assignment-2/constants"
+	"assignment-2/database"
 	"assignment-2/handlers/defaultHandler"
 	"assignment-2/handlers/notificationHandler"
 	"assignment-2/handlers/readmeHandler"
@@ -23,14 +24,8 @@ func main() {
 	// Extract port from env
 	port := os.Getenv("PORT")
 
-	//err := firestore.InitFirestore()
-
-	/*
-		if err != nil {
-			panic(err)
-		}
-
-	*/
+	database.InitFirestore()
+	defer database.CloseDB()
 
 	//TODO: defer close firestore
 
