@@ -65,7 +65,7 @@ func DisplayReadme(w http.ResponseWriter, filePath string) error {
 	}
 
 	// Create a new HTTP request to the GitHub Markdown API
-	req, err := http.NewRequest("POST", "https://api.github.com/markdown", bytes.NewBuffer(jsonBytes))
+	req, err := http.NewRequest(http.MethodPost, constants.MarkdownToHTMLApi, bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,9 @@ func DisplayReadme(w http.ResponseWriter, filePath string) error {
 	}
 
 	// Write the DOCTYPE declaration, head tag with link tag, and resulting HTML in body tag to the response writer
-	_, err = w.Write([]byte(fmt.Sprintf("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"></head><body>%s</body>", constants.DefaultCss, htmlBytes)))
+	_, err = w.Write([]byte(fmt.Sprintf(
+		"<head><link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"></head><body>%s</body>",
+		constants.DefaultCss, htmlBytes)))
 	if err != nil {
 		return err
 	}
