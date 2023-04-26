@@ -14,31 +14,18 @@ import (
 // CurrentHandler is the handler to get current information about countries renewable energy
 func CurrentHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == http.MethodGet {
+	// Switch for the different http methods
+	switch r.Method {
+	case http.MethodGet:
 		handleRenewablesCurrentGetRequest(w, r)
-	} else {
+	default:
 		http.Error(w, "REST Method '"+r.Method+"' not supported. Currently only '"+http.MethodGet+
 			"' is supported.", http.StatusNotImplemented)
-		return
 	}
 }
 
 // handleRenewablesCurrentGetRequest handles the get request for the current renewable energy information
 func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
-	//url := url.parse(r.URL.String())
-	//pathBase := path.Base(r.URL.Path)
-	//if pathBase == "current" {
-	//	//Find information for all countries
-	//	findAllCountriesInformation(w, r)
-	//} else if strings.EqualFold(r.URL.Query().Get("neighbours"), "true") {
-	//	//Find information for neighbours
-	//	findCountryNeighbours(w, pathBase)
-	//
-	//} else {
-	//	//Find information for country
-	//	singleCountry := findSingleCountryInformation(w, pathBase)
-	//	json_coder.PrettyPrint(w, singleCountry)
-	//}
 
 	// Get the parameters from the URL
 	params, err := utils.GetCurrentDataParams(r)
@@ -52,21 +39,19 @@ func handleRenewablesCurrentGetRequest(w http.ResponseWriter, r *http.Request) {
 	params.BeginYear, params.EndYear = constants.CurrentYear, constants.CurrentYear
 
 	if params.Country != "" && params.Country != constants.NullString { // If a country is specified
-		if params.Neighbours {
+		if params.Neighbours { // If neighbours is true, get the neighbours
 			NeighboursResponse(w, params)
-			//findCountryNeighbours(w, "PLACEHOLDER")
-		} else {
+		} else { // If neighbours is false, get the specified country
 			renewableUtils.SpecifiedCountryResponse(w, params)
 		}
 	} else { // If no country is specified, find all countries
 		renewableUtils.AllCountriesResponse(w, params)
 	}
-
 }
 
 // NeighboursResponse gives a response with the data for the specified country and its neighbours.
 func NeighboursResponse(w http.ResponseWriter, params structs.URLParams) {
-	// Get all countries from csv file
+	// Get all countries from the csv file
 	countries, err := utils.GetCountriesFromCsv()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
