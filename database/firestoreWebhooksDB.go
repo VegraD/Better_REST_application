@@ -122,25 +122,17 @@ func UpdateWebhooks(url string, country string, noCalls int, count int) (string,
 	}
 }
 
-func DeleteWebhooks(id string) error {
+/*
+A method for getting the total number of webhooks in the database
+*/
+func getWebhookAmount() (int, error) {
 
-	response := client.Collection(collection).Doc(id)
-
-	_, err := response.Get(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = response.Delete(ctx)
+	// Get all webhooks from database
+	webhooks, err := GetClient().Collection(collection).Documents(GetContext()).GetAll()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
+	return len(webhooks), nil
 }
