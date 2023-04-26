@@ -9,8 +9,13 @@ import (
 	"strings"
 )
 
+/*
+Handler for the notification endpoint
+*/
 func NotificationHandler(w http.ResponseWriter, r *http.Request) {
+
 	switch r.Method {
+
 	case http.MethodGet:
 		handleNotificationGetRequest(w, r)
 
@@ -25,6 +30,9 @@ func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+A function that handles GET requests to the notification endpoint
+*/
 func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("content-type", "application/json")
@@ -45,8 +53,6 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 		keyword = parts[4]
 	}
 
-	//TODO: Check for blank spaces! unicode.IsSpace (need to check each byte)
-
 	// Check if keyword is empty, if so; return all webhooks
 	if len(keyword) == 0 || keyword == "" {
 		var webhooks []structs.DisplayWebhook
@@ -61,8 +67,6 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	//TODO: Implement check in firebase
 
 	// Only relevant if keyword is set; checks if one of the elements in database has the relevant
 	for _, v := range db {
@@ -90,6 +94,9 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
+A function for handling POST request sent to the notification endpoint.
+*/
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Allocate empty struct
@@ -119,10 +126,9 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("content-type", "application/json")
+
 	// Set header to display "201 - created"
 	w.WriteHeader(http.StatusCreated)
-
-	//TODO: do this smoother, what if encoder fails?? ^
 
 	// encode response into JSON format
 	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: id})
@@ -136,11 +142,14 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "", http.StatusNoContent)
 }
 
+/*
+A function for handling delete requests sent to the notification endpoint.
+*/
 func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
-	//TODO: implement
 
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
+
 	// Get webhooks from firestore
 	db, err := database.GetAllWebhooks()
 
@@ -156,22 +165,22 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 		keyword = parts[4]
 	}
 
-	//TODO: Check for blank spaces! unicode.IsSpace (need to check each byte)
+	// Check if id is valid
 	if len(keyword) == 0 || keyword == "" {
-		http.Error(w, "please enter a valid ID to delete!", http.StatusNoContent)
+		http.Error(w, "please enter a valid ID to delete!", http.StatusBadRequest)
 		return
 	}
 
-	//TODO: Implement check in firebase
-
-	// Check for ID to delete in database (append deletion if found)
-	//TODO: how to delete from firebase? IMPLEMENT
+	// Check for ID to delete in database
 	for _, v := range db {
 		if keyword == v.WebHookID {
+			// Delete if id is found in database
 			err = database.DeletionOfWebhook(keyword)
+
 			if err != nil {
 				http.Error(w, "deletion of webhook failed", http.StatusInternalServerError)
 			}
+			// Return 200 if webhook was deleted
 			http.Error(w, "webhook successfully deleted", http.StatusOK)
 			return
 		}
@@ -181,6 +190,9 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "no valid webhook found", http.StatusNotModified)
 }
 
+/*
+A function for transforming a struct from one to another
+*/
 func registeredToDisplayable(webhook structs.RegisteredWebhook) structs.DisplayWebhook {
 
 	return structs.DisplayWebhook{
