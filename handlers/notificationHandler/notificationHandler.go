@@ -4,6 +4,7 @@ import (
 	"assignment-2/database"
 	"assignment-2/structs"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -171,4 +172,14 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 
 	// No content if no action is taken above this point.
 	http.Error(w, "no valid webhook found", http.StatusNotModified)
+}
+
+func registeredToDisplayable(webhook structs.RegisteredWebHook) structs.DisplayWebHook {
+
+	return structs.DisplayWebHook{
+		WebHookID: fmt.Sprintf(webhook.WebHookID),
+		Url:       fmt.Sprintf(webhook.Url),
+		Country:   fmt.Sprintf(webhook.Country),
+		CallS:     webhook.CallS,
+	}
 }
