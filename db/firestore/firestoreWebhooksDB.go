@@ -1,8 +1,9 @@
 package firestore
 
 import (
+	"assignment-2/constants"
 	"assignment-2/structs"
-	"assignment-2/utils"
+	"assignment-2/utils/hashing-utility"
 	"errors"
 )
 
@@ -14,9 +15,9 @@ var ct = 0
 /*
 Reads a string from the body in plain-text and sends it to Firestore to be registered as a document
 */
-func webhookAddition(url string, country string, no_calls int) (string, error) {
+func addWebhook(url string, country string, noCalls int) (string, error) {
 
-	webhookId := utils.HashingTheWebhook(url, country, no_calls)
+	webhookId := hashing_utility.HashingTheWebhook(url, country, noCalls)
 
 	response := client.Collection(collection).Doc(webhookId)
 	_, err := response.Get(ctx)
@@ -28,7 +29,7 @@ func webhookAddition(url string, country string, no_calls int) (string, error) {
 		"webhookId": webhookId,
 		"url":       url,
 		"country":   country,
-		"calls":     no_calls,
+		"calls":     noCalls,
 		"count":     0,
 	})
 	if err != nil {
@@ -50,4 +51,20 @@ func getAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
 		return structs.RegisteredWebHook{}, err
 	}
 	return structs.RegisteredWebHook{}, nil
+}
+
+func deletionOfWebhook(webhookID string) error {
+	getResponse := client.Collection(collection).Doc(webhookID)
+	_, err := getResponse.Get(ctx)
+	if err != nil {
+		return errors.New(constants.WebhookNotFound)
+	}
+
+	_, err = getResponse.Delete(ctx)
+	if err != nil {
+		return err
+	} else {
+		return nil
+
+	}
 }

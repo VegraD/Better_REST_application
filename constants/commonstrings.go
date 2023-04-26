@@ -10,3 +10,7 @@ const (
 
 	CurrentYear string = "-1"
 )
+
+const (
+	WebhookNotFound string = "webhook was not found"
+)
