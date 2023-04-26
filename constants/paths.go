@@ -39,10 +39,10 @@ const (
 	CountryApi = "http://129.241.150.113:8080/"
 
 	// countyreApiVersion is the version of the country API.
-	CountryApiVersion = "/v3.1/"
+	CountryApiVersion = "v3.1/"
 
 	// CountryAlpha it the subdirectory to search for country based on alpha code
-	CountryAlpha = "/alpha/"
+	CountryAlpha = "alpha/"
 
 	// RenewablesApi is the endpoint path for retrieving renewable energy production.
 	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
