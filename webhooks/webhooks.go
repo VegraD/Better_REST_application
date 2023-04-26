@@ -1,7 +1,6 @@
 package webhooks
 
 import (
-	"assignment-2/handlers/notificationHandler"
 	"assignment-2/structs"
 	"bytes"
 	"encoding/json"
@@ -13,6 +12,7 @@ import (
 	"strconv"
 )
 
+/*
 // TODO: implement with persistent storage
 func InvokeWebhook(w http.ResponseWriter, country string) {
 	webhooks := notificationHandler.Db
@@ -28,6 +28,8 @@ func InvokeWebhook(w http.ResponseWriter, country string) {
 		}
 	}
 }
+
+*/
 
 // TODO: add functionality for incrementing calls
 func callURL(method string, webhook structs.RegisteredWebHook) error {
