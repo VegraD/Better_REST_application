@@ -71,8 +71,9 @@ func DisplayReadme(w http.ResponseWriter, filePath string) error {
 	}
 
 	// Set the request headers
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "text/plain")
 	req.Header.Set("Accept", "application/vnd.github+json")
+	req.Header.Set("User-Agent", "School project")
 
 	// Send the request and get the response
 	client := &http.Client{}
@@ -93,10 +94,8 @@ func DisplayReadme(w http.ResponseWriter, filePath string) error {
 		return err
 	}
 
-	// Write the DOCTYPE declaration, head tag with link tag, and resulting HTML in body tag to the response writer
-	_, err = w.Write([]byte(fmt.Sprintf(
-		"<head><link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"></head><body>%s</body>",
-		constants.DefaultCss, htmlBytes)))
+	// Write the DOCTYPE declaration, head tag with link tag, charset and resulting HTML in body tag to response writer
+	_, err = w.Write([]byte(fmt.Sprintf(constants.ReadmeHtml, constants.DefaultCss, htmlBytes)))
 	if err != nil {
 		return err
 	}
