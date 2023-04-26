@@ -125,7 +125,7 @@ func UpdateWebhooks(url string, country string, noCalls int, count int) (string,
 /*
 A method for getting the total number of webhooks in the database
 */
-func getWebhookAmount() (int, error) {
+func GetWebhookAmount() (int, error) {
 
 	// Get all webhooks from database
 	webhooks, err := GetClient().Collection(collection).Documents(GetContext()).GetAll()

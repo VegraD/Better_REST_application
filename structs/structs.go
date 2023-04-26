@@ -6,9 +6,9 @@ type Status struct {
 	CountriesApi    string `json:"countries_api"`
 	MarkdownHtmlApi string `json:"markdown_html_api"`
 	NotificationDB  string `json:"notification_db"`
-	Webhooks        string `json:"webhooks"`
+	Webhooks        int    `json:"webhooks"`
 	Version         string `json:"version"`
-	Uptime          string `json:"uptime"`
+	Uptime          int    `json:"uptime"`
 }
 
 type URLParams struct {
