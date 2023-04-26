@@ -1,7 +1,7 @@
 package webhooks
 
 import (
-	"assignment-2/handlers/notificationHandler"
+	"assignment-2/database"
 	"assignment-2/structs"
 	"bytes"
 	"encoding/json"
@@ -14,19 +14,35 @@ import (
 )
 
 // TODO: implement with persistent storage
-func InvokeWebhook(w http.ResponseWriter, country string) {
-	webhooks := notificationHandler.Db
+func InvokeWebhook(country string) error {
+	webhooks, err := database.GetAllWebhooks()
 
-	for _, v := range webhooks {
-		if v.Country == country {
+	if err != nil {
+		return errors.New("Webhooks is empty")
+	}
+	if country == "" {
+		for _, v := range webhooks {
 			v.Count = v.Count + 1
-			if v.CallS == v.Count {
+			if v.CallS <= v.Count {
 				v.Count = 0
 
 				go callURL(http.MethodPost, v)
 			}
+			_, err = database.UpdateWebhooks(v.Url, v.Country, v.CallS, v.Count)
 		}
 	}
+	for _, v := range webhooks {
+		if v.Country == country {
+			v.Count = v.Count + 1
+			if v.CallS <= v.Count {
+				v.Count = 0
+
+				go callURL(http.MethodPost, v)
+			}
+			_, err = database.UpdateWebhooks(v.Url, v.Country, v.CallS, v.Count)
+		}
+	}
+	return nil
 }
 
 // TODO: add functionality for incrementing calls

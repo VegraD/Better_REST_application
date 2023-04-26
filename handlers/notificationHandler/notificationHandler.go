@@ -4,14 +4,9 @@ import (
 	"assignment-2/database"
 	"assignment-2/structs"
 	"encoding/json"
-	"fmt"
-	"math/rand"
 	"net/http"
 	"strings"
-	"time"
 )
-
-var Db = []structs.RegisteredWebHook{}
 
 func NotificationHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -34,6 +29,13 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
 
+	// Get webhooks from firestore
+	db, err := database.GetAllWebhooks()
+
+	if err != nil {
+		http.Error(w, "database is empty", http.StatusNoContent)
+	}
+
 	// Split URL paths into parts
 	parts := strings.Split(r.URL.Path, "/")
 
@@ -46,8 +48,8 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Check if keyword is empty, if so; return all webhooks
 	if len(keyword) == 0 || keyword == "" {
-		// Display all elements in database
-		err := json.NewEncoder(w).Encode(Db)
+		// encode and display database
+		err = json.NewEncoder(w).Encode(db)
 		if err != nil {
 			http.Error(w, "error during encoding", http.StatusInternalServerError)
 			return
@@ -58,8 +60,9 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement check in firebase
 
 	// Only relevant if keyword is set; checks if one of the elements in database has the relevant
-	for _, v := range Db {
+	for _, v := range db {
 		if keyword == v.WebHookID {
+			// Get webhook from database
 			webhook, err := database.GetAndDisplayWebhook(v.WebHookID)
 			if err != nil {
 				http.Error(w, "error fetching webhook", http.StatusInternalServerError)
@@ -82,9 +85,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Allocate empty struct
-	webhook := structs.WebHookRequest{}
-
-	w.Header().Add("content-type", "application/json")
+	var webhook structs.WebHookRequest
 
 	// Decode POST request
 	err := json.NewDecoder(r.Body).Decode(&webhook)
@@ -100,33 +101,23 @@ func handleNotificationPostRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Change struct into RegisteredWebHook and set ID
-	webhookR, err := requestToRegistered(webhook, validateAndSetID())
+	// Add webhook to firestore database
+	id, err := database.AddWebhook(webhook.URL, webhook.Country, webhook.Calls)
 
+	// throw error if webhook cannot be added to database
 	if err != nil {
-		http.Error(w, "error during JSON request translation", http.StatusInternalServerError)
+		http.Error(w, "couldnt add webhook to server", http.StatusInternalServerError)
 		return
 	}
 
-	/*
-		id, err := firestore.WebhookAddition(webhookR.Url, webhookR.Country, webhookR.CallS)
-
-		if err != nil {
-			http.Error(w, "couldnt add webhook to server", http.StatusInternalServerError)
-		}
-
-	*/
-
-	// Append webhook to database
-	Db = append(Db, webhookR)
-
-	//TODO: do this smoother, what if encoder fails??
-
+	w.Header().Add("content-type", "application/json")
 	// Set header to display "201 - created"
 	w.WriteHeader(http.StatusCreated)
 
+	//TODO: do this smoother, what if encoder fails?? ^
+
 	// encode response into JSON format
-	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: webhookR.WebHookID /*id*/})
+	err = json.NewEncoder(w).Encode(structs.WebHookIDResponse{WebhookID: id})
 
 	if err != nil {
 		http.Error(w, "error during response decoding", http.StatusInternalServerError)
@@ -142,6 +133,12 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("content-type", "application/json")
 	keyword := ""
+	// Get webhooks from firestore
+	db, err := database.GetAllWebhooks()
+
+	if err != nil {
+		http.Error(w, "database is empty", http.StatusNoContent)
+	}
 
 	// split URL into parts
 	parts := strings.Split(r.URL.Path, "/")
@@ -160,9 +157,13 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement check in firebase
 
 	// Check for ID to delete in database (append deletion if found)
-	for i, v := range Db {
+	//TODO: how to delete from firebase? IMPLEMENT
+	for _, v := range db {
 		if keyword == v.WebHookID {
-			Db = append(Db[:i], Db[i+1:]...)
+			err = database.DeletionOfWebhook(keyword)
+			if err != nil {
+				http.Error(w, "deletion of webhook failed", http.StatusInternalServerError)
+			}
 			http.Error(w, "webhook successfully deleted", http.StatusOK)
 			return
 		}
@@ -170,56 +171,4 @@ func handleNotificationDeleteRequest(w http.ResponseWriter, r *http.Request) {
 
 	// No content if no action is taken above this point.
 	http.Error(w, "no valid webhook found", http.StatusNotModified)
-}
-
-// TODO: error handling if input is empty
-func requestToRegistered(request structs.WebHookRequest, id string) (structs.RegisteredWebHook, error) {
-
-	// Return new struct, set count to 0 as it is yet to be called
-	return structs.RegisteredWebHook{
-		WebHookID: fmt.Sprintf(id),
-		Url:       fmt.Sprintf(request.URL),
-		Country:   fmt.Sprintf(request.Country),
-		CallS:     request.Calls,
-		Count:     0,
-	}, nil
-}
-
-func validateAndSetID() string {
-
-	randID := ""
-
-	// Dont validate if database so far is empty; no reason to check against other webhooks if no other webhooks exist.
-	if len(Db) == 0 {
-		return idGen()
-	}
-
-	//TODO: change to check in firebase Db
-	for i, v := range Db {
-		// Generate random ID
-		randID = idGen()
-
-		// This will run for loop on same element again
-		if v.WebHookID == randID {
-			i--
-			continue
-		}
-	}
-	return randID
-}
-
-func idGen() string {
-
-	// Possible letters to have in ID
-	letters := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	// Seed so the random integer is not the same each time.
-	rand.Seed(time.Now().UnixNano())
-
-	// Allocate empty byte array with 13 bytes
-	id := make([]byte, 13)
-	for j := range id {
-		id[j] = letters[rand.Intn(len(letters))]
-	}
-	return string(id)
 }

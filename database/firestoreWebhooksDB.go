@@ -21,9 +21,6 @@ func AddWebhook(url string, country string, noCalls int) (string, error) {
 	response := client.Collection(collection).Doc(webhookId)
 	_, err := response.Get(ctx)
 
-	if err != nil {
-		return "", errors.New("webhooks already exist")
-	}
 	_, err = response.Set(ctx, map[string]interface{}{
 		"webhookId": webhookId,
 		"url":       url,
@@ -102,4 +99,48 @@ func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
 	}
 
 	return webhooks, nil
+}
+
+func UpdateWebhooks(url string, country string, noCalls int, count int) (string, error) {
+
+	webhookId := hashing_utility.HashingTheWebhook(url, country, noCalls)
+
+	response := client.Collection(collection).Doc(webhookId)
+	_, err := response.Get(ctx)
+
+	_, err = response.Set(ctx, map[string]interface{}{
+		"webhookId": webhookId,
+		"url":       url,
+		"country":   country,
+		"calls":     noCalls,
+		"count":     count,
+	})
+	if err != nil {
+		return "", err
+	} else {
+		return webhookId, nil
+	}
+}
+
+func DeleteWebhooks(id string) error {
+
+	response := client.Collection(collection).Doc(id)
+
+	_, err := response.Get(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = response.Delete(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
 }
