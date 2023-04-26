@@ -1,7 +1,7 @@
 package notificationHandler
 
 import (
-	"assignment-2/db/firestore"
+	"assignment-2/database"
 	"assignment-2/structs"
 	"encoding/json"
 	"fmt"
@@ -60,7 +60,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	// Only relevant if keyword is set; checks if one of the elements in database has the relevant
 	for _, v := range Db {
 		if keyword == v.WebHookID {
-			webhook, err := firestore.GetAndDisplayWebhook(v.WebHookID)
+			webhook, err := database.GetAndDisplayWebhook(v.WebHookID)
 			if err != nil {
 				http.Error(w, "error fetching webhook", http.StatusInternalServerError)
 				return
