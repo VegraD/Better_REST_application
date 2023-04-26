@@ -17,12 +17,11 @@ COPY ./utils /go/src/app/utils
 COPY ./webhooks /go/src/app/webhooks
 COPY ./go.mod /go/src/app/go.mod
 COPY ./go.sum /go/src/app/go.sum
+COPY ./assignment-2-key.json /go/src/app/assignment-2-key.json
 
 # Compile binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o server
 
-# Retrieve binary from builder container
-COPY ./assignment-2-key.json /go/src/app/assignment-2-key.json
 
 # Instantiate server
 CMD ["./server"]
