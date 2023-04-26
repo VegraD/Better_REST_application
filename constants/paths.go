@@ -46,6 +46,8 @@ const (
 
 	// RenewablesApi is the endpoint path for retrieving renewable energy production.
 	RenewablesApi = "https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view"
+
+	MarkdownToHTMLApi = "https://api.github.com/markdown"
 )
 
 // ################################# Unexported constants below this line #################################
