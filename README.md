@@ -2,7 +2,7 @@
 
 ## Renewables
 ### Description
-Renewables is a superdirectory containing the historical percentage of renewables endpoint and the current percentage of
+Renewables is a directory containing the historical percentage of renewables endpoint and the current percentage of
 renewables endpoint. 
 
 Both endpoints will return a JSON object containing the percentage of renewables in the energy mix for the selected 
@@ -35,6 +35,106 @@ The alternative form is as follows:
 
 ***Note:*** All renewable endpoints are case-insensitive, so all parameter and values can be entered in any case.
 
+---
+
+## - File structure
+```
+Assignment-2
+|   .gitignore
+|   assignment-2-key.json
+|   docker-compose.yml
+|   Dockerfile
+|   go.mod
+|   go.sum
+|   README.md
+|
++---.idea
+|   |   .gitignore
+|   |   assignment-2.iml
+|   |   misc.xml
+|   |   modules.xml
+|   |   vcs.xml
+|   |   workspace.xml
+|   |
+|   \---inspectionProfiles
+|           Project_Default.xml
+|
++---cmd
+|       main.go
+|
++---constants
+|       commonstrings.go
+|       internalPaths.go
+|       paths.go
+|
++---database
+|       firestoreWebhooksDB.go
+|       initFirestore.go
+|
++---handlers
+|   +---defaultHandler
+|   |       defaultHandler.go
+|   |       defaultHandler_test.go
+|   |
+|   +---notificationHandler
+|   |       notificationHandler.go
+|   |       notificationHandler_test.go
+|   |
+|   +---readmeHandler
+|   |       readmeHandler.go
+|   |
+|   +---renewableHandlers
+|   |   +---currentHandler
+|   |   |       currentHandler.go
+|   |   |       currentHandler_test.go
+|   |   |
+|   |   +---historicalHandler
+|   |   |       historicalHandler.go
+|   |   |       historicalHandler_test.go
+|   |   |
+|   |   \---renewableUtils
+|   |           renewableUtils.go
+|   |
+|   \---statusHandler
+|           statusHandler.go
+|           statusHandler_test.go
+|
++---json_coder
+|       decoder.go
+|       encoder.go
+|
++---res
+|       renewable-share-energy.csv
+|
++---responses
+|       countries.json
+|       countries_formatted.json
+|       formatJSON.go
+|       renewable-share-energy.csv
+|
++---static
+|   +---css
+|   |       default.css
+|   |
+|   \---html
+|           defEndpoint.html
+|
++---structs
+|       structs.go
+|
++---utils
+|   |   fileHandler.go
+|   |   showHTML.go
+|   |   time.go
+|   |   urlToParams.go
+|   |
+|   \---hashing-utility
+|           hash_secret.go
+|           webhookHashing.go
+|
+\---webhooks
+        webhooks.go
+```
 
 ##  - Current percentage of renewables endpoint
 
