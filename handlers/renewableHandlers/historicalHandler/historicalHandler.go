@@ -27,10 +27,9 @@ func getHistoricalData(w http.ResponseWriter, r *http.Request) {
 
 	// If no country is specified, return data for all countries, else return data for specified country
 	params.EndPoint = constants.History // Set the endpoint to historical for selecting the correct data.
-	if params.Country == "" || params.Country == "null" {
+	if params.Country == "" || params.Country == constants.NullString {
 		renewableUtils.AllCountriesResponse(w, params)
 	} else {
 		renewableUtils.SpecifiedCountryResponse(w, params)
 	}
-
 }

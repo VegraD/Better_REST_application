@@ -1,7 +1,17 @@
 package constants
 
 const Version string = "v1"
-const NullString string = "null"
+
+// Constants for URL parameters
+const (
+	NullString        string = "null"
+	CountryString     string = "country"
+	BeginString       string = "begin"
+	EndString         string = "end"
+	TrueString        string = "true"
+	SortByValueString string = "sortByValue"
+	NeighboursString  string = "neighbours"
+)
 
 // Constants for choosing the correct data.
 const (
@@ -13,8 +23,8 @@ const (
 
 // Common error messages
 const (
-	CheckURLErr    string = ": Check that you entered the correct URL!"
-	MarshallingErr string = "Error during marshalling: "
-	PrettyPrintErr string = "Error during pretty printing: "
+	CheckURLErr     string = ": Check that you entered the correct URL!"
+	MarshallingErr  string = "Error during marshalling: "
+	PrettyPrintErr  string = "Error during pretty printing: "
 	WebhookNotFound string = "webhook was not found"
 )

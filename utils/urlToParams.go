@@ -97,17 +97,17 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 		}
 	}
 
-	beginYear := queryParams.Get("begin")
+	beginYear := queryParams.Get(constants.BeginString)
 	if beginYear != "" {
 		params.BeginYear = beginYear
 	}
 
-	endYear := queryParams.Get("end")
+	endYear := queryParams.Get(constants.EndString)
 	if endYear != "" {
 		params.EndYear = endYear
 	}
 
-	sortByValue := queryParams.Get("sortByValue") == "true"
+	sortByValue := queryParams.Get(constants.SortByValueString) == constants.TrueString
 	params.SortByValue = sortByValue
 
 	// Correct the order of the years if beginYear > endYear
@@ -131,7 +131,7 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	re := regexp.MustCompile(`^$|^[a-zA-Z\s]{3,50}$`)
 
 	// Set the params struct fields
-	country := queryParams.Get("country")
+	country := queryParams.Get(constants.CountryString)
 	if country != "" {
 		if !re.MatchString(country) {
 			return structs.URLParams{}, errors.New("country name can either be empty or contain 3-50 letters")
@@ -145,7 +145,7 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	}
 	params.Country = strings.ToUpper(country)
 
-	neighbours := queryParams.Get("neighbours") == "true"
+	neighbours := queryParams.Get(constants.NeighboursString) == constants.TrueString
 	params.Neighbours = neighbours
 
 	return params, nil
@@ -171,9 +171,9 @@ func convertNameToCode(countryName string) (string, error) {
 
 // validateCountry validates the country parameter in the URL path.
 func validateCountry(queryParams url.Values, pathParts []string, re *regexp.Regexp) error {
-	if !queryParams.Has("country") {
+	if !queryParams.Has(constants.CountryString) {
 		if len(pathParts) > 0 && re.MatchString(pathParts[0]) {
-			queryParams.Set("country", pathParts[0])
+			queryParams.Set(constants.CountryString, pathParts[0])
 		} else {
 			return errors.New("invalid country parameter")
 		}
@@ -196,19 +196,19 @@ func currCountryRegex(queryParams url.Values, pathParts []string) error {
 // validateBeginEndYear validates the begin and end year parameters in the URL path.
 func validateBeginEndYear(queryParams url.Values, pathParts []string) {
 	// TODO: Include other parameters in the validation other than just checking if they are specified.
-	if len(pathParts) > 1 && pathParts[1] != "" && pathParts[1] != "null" {
-		queryParams.Set("begin", pathParts[1])
+	if len(pathParts) > 1 && pathParts[1] != "" && pathParts[1] != constants.NullString {
+		queryParams.Set(constants.BeginString, pathParts[1])
 	}
-	if len(pathParts) > 2 && pathParts[2] != "" && pathParts[2] != "null" {
-		queryParams.Set("end", pathParts[2])
+	if len(pathParts) > 2 && pathParts[2] != "" && pathParts[2] != constants.NullString {
+		queryParams.Set(constants.EndString, pathParts[2])
 	}
 }
 
 // setSortByYear sets the sortByValue query parameter to true if the sortByValue path parameter is "true".
 func setSortByYear(queryParams url.Values, pathParts []string) {
 	for _, p := range pathParts {
-		if strings.ToLower(p) == "true" {
-			queryParams.Set("sortByValue", "true")
+		if strings.ToLower(p) == constants.TrueString {
+			queryParams.Set(constants.SortByValueString, constants.TrueString)
 			break
 		}
 	}
@@ -217,8 +217,8 @@ func setSortByYear(queryParams url.Values, pathParts []string) {
 // setNeighbours sets the neighbours query parameter to true if the neighbours path parameter is "true".
 func setNeighbours(queryParams url.Values, pathParts []string) {
 	for _, p := range pathParts {
-		if strings.ToLower(p) == "true" {
-			queryParams.Set("neighbours", "true")
+		if strings.ToLower(p) == constants.TrueString {
+			queryParams.Set(constants.NeighboursString, constants.TrueString)
 			break
 		}
 	}
