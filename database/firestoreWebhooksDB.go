@@ -9,7 +9,7 @@ import (
 )
 
 // Collection name in Firestore
-const collection = "webhooks"
+var collection = "webhooks"
 
 var ct = 0
 
@@ -135,4 +135,29 @@ func getWebhookAmount() (int, error) {
 	}
 
 	return len(webhooks), nil
+}
+
+/*
+	Function for clearing the database of potential webhooks
+*/
+func ClearDB() {
+	db, _ := GetAllWebhooks()
+
+	for _, v := range db {
+		_ = DeletionOfWebhook(v.WebHookID)
+	}
+}
+
+/*
+	A function for setting up a test database
+*/
+func TestDatabaseSetup() []string {
+	collection = "testing"
+	ClearDB()
+
+	id1, _ := AddWebhook("https://testurl.com", "Norway", 2)
+	id2, _ := AddWebhook("https://testurl2.com", "Finland", 2)
+	id3, _ := AddWebhook("https://testurl3.com", "Sweden", 2)
+
+	return []string{id1, id2, id3}
 }
