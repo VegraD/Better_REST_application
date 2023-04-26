@@ -39,6 +39,7 @@ func pathToQueryHistParams(r *http.Request) (url.Values, error) {
 	u.RawQuery = queryParams.Encode()
 	r.URL = u
 
+	// queryParams is on the form: map[country:[nor] begin:[2011] end:[2013] sortByValue:[true]]
 	return queryParams, nil
 }
 
@@ -87,8 +88,8 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 	// Set the params struct fields
 	country := queryParams.Get("country")
 	if country != "" {
-		if strings.ToLower(country) == "null" {
-			params.Country = "null"
+		if strings.ToLower(country) == constants.NullString {
+			params.Country = constants.NullString
 		} else if !re.MatchString(country) {
 			return structs.URLParams{}, errors.New("only 3 letter country codes are allowed")
 		} else {
@@ -144,7 +145,7 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	}
 	params.Country = strings.ToUpper(country)
 
-	neighbours := strings.EqualFold(r.URL.Query().Get("neighbours"), "true")
+	neighbours := queryParams.Get("neighbours") == "true"
 	params.Neighbours = neighbours
 
 	return params, nil
@@ -205,21 +206,28 @@ func validateBeginEndYear(queryParams url.Values, pathParts []string) {
 
 // setSortByYear sets the sortByValue query parameter to true if the sortByValue path parameter is "true".
 func setSortByYear(queryParams url.Values, pathParts []string) {
-	if len(pathParts) > 3 && pathParts[3] != "" {
-		queryParams.Set("sortByValue", pathParts[3])
+	for _, p := range pathParts {
+		if strings.ToLower(p) == "true" {
+			queryParams.Set("sortByValue", "true")
+			break
+		}
 	}
 }
 
 // setNeighbours sets the neighbours query parameter to true if the neighbours path parameter is "true".
 func setNeighbours(queryParams url.Values, pathParts []string) {
-	if len(pathParts) > 1 && pathParts[1] != "" {
-		queryParams.Set("neighbours", pathParts[1])
+	for _, p := range pathParts {
+		if strings.ToLower(p) == "true" {
+			queryParams.Set("neighbours", "true")
+			break
+		}
 	}
 }
 
 // correctYearOrder corrects the order of the years if beginYear > endYear
 func correctYearOrder(params structs.URLParams) structs.URLParams {
-	if params.BeginYear != "" && params.EndYear != "" {
+	if params.BeginYear != "" && params.BeginYear != constants.NullString &&
+		params.EndYear != "" && params.EndYear != constants.NullString {
 		begin, err1 := strconv.Atoi(params.BeginYear)
 		end, err2 := strconv.Atoi(params.EndYear)
 		if err1 == nil && err2 == nil && begin > end || end < begin {

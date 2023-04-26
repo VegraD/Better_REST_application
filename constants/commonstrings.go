@@ -11,6 +11,10 @@ const (
 	CurrentYear string = "-1"
 )
 
+// Common error messages
 const (
+	CheckURLErr    string = ": Check that you entered the correct URL!"
+	MarshallingErr string = "Error during marshalling: "
+	PrettyPrintErr string = "Error during pretty printing: "
 	WebhookNotFound string = "webhook was not found"
 )
