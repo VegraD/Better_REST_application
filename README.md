@@ -1,8 +1,47 @@
 # assignment-2
 
+## Renewables
+### Description
+Renewables is a superdirectory containing the historical percentage of renewables endpoint and the current percentage of
+renewables endpoint. 
+
+Both endpoints will return a JSON object containing the percentage of renewables in the energy mix for the selected 
+country or countries.
+- Historical percentage of renewables endpoint will return the percentage of renewables for
+each year from the begin year to the end year.
+-  Current percentage of renewables endpoint will return the percentage
+of renewables for the latest year for which data is available.
+
+##### Root paths
+The endpoints have the following root paths:
+- Historical percentage of renewables: `/energy/v1/renewables/history`
+- Current percentage of renewables: `/energy/v1/renewables/current`
+
+##### placeholders for query parameters
+This document have the following conventions for placeholders:
+- `{value?}` - optional value
+- `{?parameter?}` - optional parameter 
+
+#### Full endpoint paths
+The endpoints have the following full paths:
+- Current percentage of renewables: `/energy/v1/renewables/current/{country?}{?sortByValue=bool?}`
+- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}{?begin=year&end=year?}{?sortByValue=bool?}`
+
+##### Alternative to query parameters
+The endpoints also have an alternative form where the parameters are placed in the path instead of as query parameters.
+The alternative form is as follows:
+- Current percentage of renewables: `/energy/v1/renewables/current/{country?}/{bool?}`
+- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}/{year?}/{year?}/{bool?}`
 
 
-## - Historical percentage of renewables endpoint
+##  - Current percentage of renewables endpoint
+
+---
+
+
+
+
+##  - Historical percentage of renewables endpoint
 
 ---
 ### Description
