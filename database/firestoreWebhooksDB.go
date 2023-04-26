@@ -34,19 +34,19 @@ func AddWebhook(url string, country string, noCalls int) (string, error) {
 		return webhookId, nil
 	}
 }
-func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebHook, error) {
+func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebhook, error) {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	doc, err := getResponse.Get(ctx)
 	if err != nil {
-		return structs.RegisteredWebHook{}, errors.New("webhook not found")
+		return structs.RegisteredWebhook{}, errors.New("webhook not found")
 	}
 
-	var webhookToBeDisplayed structs.RegisteredWebHook
+	var webhookToBeDisplayed structs.RegisteredWebhook
 	err = doc.DataTo(&webhookToBeDisplayed)
 	if err != nil {
-		return structs.RegisteredWebHook{}, err
+		return structs.RegisteredWebhook{}, err
 	}
-	return structs.RegisteredWebHook{}, nil
+	return structs.RegisteredWebhook{}, nil
 }
 
 func DeletionOfWebhook(webhookID string) error {
@@ -65,9 +65,9 @@ func DeletionOfWebhook(webhookID string) error {
 	}
 }
 
-func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
+func GetAllWebhooks() ([]structs.RegisteredWebhook, error) {
 
-	var webhooks []structs.RegisteredWebHook
+	var webhooks []structs.RegisteredWebhook
 
 	collection := GetClient().Collection(collection).Documents(GetContext())
 
@@ -83,7 +83,7 @@ func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
 			return nil, err
 		}
 
-		var webhookToAdd structs.RegisteredWebHook
+		var webhookToAdd structs.RegisteredWebhook
 		err = wh.DataTo(&webhookToAdd)
 
 		if err != nil {
@@ -95,7 +95,7 @@ func GetAllWebhooks() ([]structs.RegisteredWebHook, error) {
 	}
 
 	if len(webhooks) == 0 {
-		return []structs.RegisteredWebHook{}, errors.New("database is empty")
+		return []structs.RegisteredWebhook{}, errors.New("database is empty")
 	}
 
 	return webhooks, nil
