@@ -133,7 +133,6 @@ func getBorderDataFromApi(countryCode string) ([]string, error) {
 
 	// Create the api link by adding the country code to the api link
 	apiLink := constants.CountryApi + constants.CountryApiVersion + constants.CountryAlpha + countryCode
-
 	// Get the data from the api
 	neighbours, err := http.Get(apiLink)
 	if err != nil {
