@@ -1,16 +1,14 @@
 package json_coder
 
 import (
+	"assignment-2/constants"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
 
-/*
-PrettyPrint gotten from 02-JSON-demo
-Using an interface so that no extra method is needed.
-*/
+// PrettyPrint gotten from 02-JSON-demo and modified slightly.
+// Using an interface so that no extra method is needed.
 func PrettyPrint(w http.ResponseWriter, in interface{}) {
 
 	// Set content type to json
@@ -19,9 +17,17 @@ func PrettyPrint(w http.ResponseWriter, in interface{}) {
 
 	output, err := json.MarshalIndent(in, "", "  ")
 	if err != nil {
-		log.Println("Error during pretty printing of output: " + err.Error())
-		http.Error(w, "Error during pretty printing", http.StatusInternalServerError)
+		log.Println(constants.MarshallingErr + err.Error())
+		http.Error(w, constants.MarshallingErr, http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, string(output))
+
+	//_, err = fmt.Fprintf(w, string(output)) // TODO: Why the Fprintf?
+	_, err = w.Write(output)
+	if err != nil {
+		log.Println(constants.PrettyPrintErr + err.Error())
+		http.Error(w, constants.PrettyPrintErr, http.StatusInternalServerError)
+		return
+	}
+
 }
