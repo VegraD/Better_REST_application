@@ -93,7 +93,7 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// No content if no action is taken above this point.
-	http.Error(w, "", http.StatusNoContent)
+	http.Error(w, "", http.StatusBadRequest)
 
 }
 
