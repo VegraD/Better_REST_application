@@ -37,7 +37,7 @@ The alternative form is as follows:
 
 ---
 
-## - File structure
+## - Tree view of the file structure
 ```
 Assignment-2
 |   .gitignore
@@ -48,16 +48,7 @@ Assignment-2
 |   go.sum
 |   README.md
 |
-+---.idea
-|   |   .gitignore
-|   |   assignment-2.iml
-|   |   misc.xml
-|   |   modules.xml
-|   |   vcs.xml
-|   |   workspace.xml
-|   |
-|   \---inspectionProfiles
-|           Project_Default.xml
+|
 |
 +---cmd
 |       main.go
@@ -69,6 +60,7 @@ Assignment-2
 |
 +---database
 |       firestoreWebhooksDB.go
+|       firestoreWebhooksDB_test.go
 |       initFirestore.go
 |
 +---handlers
@@ -118,6 +110,8 @@ Assignment-2
 |   |
 |   \---html
 |           defEndpoint.html
+|           inputFields.js
+|           responseContainer.js
 |
 +---structs
 |       structs.go
@@ -134,6 +128,7 @@ Assignment-2
 |
 \---webhooks
         webhooks.go
+
 ```
 
 ##  - Current percentage of renewables endpoint
