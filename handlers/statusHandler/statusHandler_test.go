@@ -5,15 +5,30 @@ import (
 	"assignment-2/structs"
 	"assignment-2/utils"
 	"github.com/stretchr/testify/assert"
+	"log"
+	"os"
 	"testing"
 	"time"
 )
 
 // TestMain starts a main sequence for the test file
 func TestMain(m *testing.M) {
-	database.InitFirestore()
-	defer database.CloseDB()
+	workDir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err2 := os.Chdir(workDir + "/../..")
+	if err2 != nil {
+		return
+	}
 
+	database.InitFirestore()
+	defer func() {
+		err := database.CloseDB()
+		if err != nil {
+			log.Printf("Error in closing database: %s", err)
+		}
+	}()
 	m.Run()
 }
 

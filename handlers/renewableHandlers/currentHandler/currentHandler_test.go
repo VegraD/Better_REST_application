@@ -2,11 +2,13 @@ package currentHandler
 
 import (
 	"assignment-2/constants"
+	"assignment-2/database"
 	"assignment-2/structs"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -17,7 +19,22 @@ var currentEndpoint *httptest.Server
 Test function for current endpoint.
 */
 func TestMain(m *testing.M) {
-
+	workDir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err2 := os.Chdir(workDir + "/../../..")
+	if err2 != nil {
+		return
+	}
+	database.InitFirestore()
+	defer func() {
+		err := database.CloseDB()
+		if err != nil {
+			log.Printf("Error in closing database: %s", err)
+		}
+	}()
+	//database.InitFirestore()
 	server := httptest.NewServer(http.HandlerFunc(CurrentHandler))
 	defer server.Close()
 
@@ -30,7 +47,6 @@ func TestMain(m *testing.M) {
 	//client := http.Client{}
 
 	// URL under which server is instantiated
-	fmt.Println("URL: ", server.URL+constants.CurrentEP)
 
 	//res, err := client.Get(server.URL + constants.CurrentEP)
 	//if err != nil {
@@ -42,6 +58,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestSingleCountry(t *testing.T) {
+
 	type args struct {
 		url string
 	}
