@@ -643,6 +643,44 @@ Example body:
 }
 ```
 
+## - Status endpoint
+
+---
+The status endpoint provides information on whether the service is up and running or not.
+It does this by checking the status codes received from the different service endpoints 
+we have defined above. It will, in addition, provide the number of webhooks currently registered
+in the database.
+
+The root path of this endpoint is: `energy/v1/status/`.
+
+### - Request
+```
+Method: GET
+Path: energy/v1/status
+```
+
+### - Response
+
+
+
+- Example of body response:
+```
+{
+    "countries_api": "200 OK",
+    "markdown_html_api": "200 OK",
+    "notification_db": "200 OK",
+    "webhooks": 6,
+    "version": "v1",
+    "uptime": 86
+}
+```
+Where:
+- `countries_api`: status of the third party country API
+- `markdown_html_api`: status of the markdown API
+- `notification_db`: status of the webhooks database 
+- `webhooks`: the amount of webhooks in the database
+- `uptime`: the service uptime in seconds
+
 ## Service Compilation requirements
 
 ---
