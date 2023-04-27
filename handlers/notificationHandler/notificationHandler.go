@@ -2,6 +2,7 @@ package notificationHandler
 
 import (
 	"assignment-2/database"
+	"assignment-2/json_coder"
 	"assignment-2/structs"
 	"encoding/json"
 	"fmt"
@@ -60,7 +61,8 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 		for _, v := range db {
 			webhooks = append(webhooks, registeredToDisplayable(v))
 		}
-		err = json.NewEncoder(w).Encode(webhooks)
+		//err = json.NewEncoder(w).Encode(webhooks)
+		json_coder.PrettyPrint(w, webhooks)
 		if err != nil {
 			http.Error(w, "error during encoding", http.StatusInternalServerError)
 			return
@@ -80,7 +82,8 @@ func handleNotificationGetRequest(w http.ResponseWriter, r *http.Request) {
 			// Change from registered webhook to displayable webhook
 			dispWebhook := registeredToDisplayable(webhook)
 			// Decode webhook and display
-			err = json.NewEncoder(w).Encode(dispWebhook)
+			//err = json.NewEncoder(w).Encode(dispWebhook)
+			json_coder.PrettyPrint(w, dispWebhook)
 			if err != nil {
 				http.Error(w, "error during database encoding", http.StatusInternalServerError)
 				return
