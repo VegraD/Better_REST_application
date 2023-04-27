@@ -83,16 +83,20 @@ func GetHistoricalDataParams(r *http.Request) (structs.URLParams, error) {
 		return structs.URLParams{}, err
 	}
 
-	re := regexp.MustCompile(`^$|^[a-zA-Z]{3}$|^null$`)
+	re := regexp.MustCompile(`^$|^[a-zA-Z\s]{3,50}$`)
 
 	// Set the params struct fields
-	country := queryParams.Get("country")
-	if country != "" {
-		if strings.ToLower(country) == constants.NullString {
-			params.Country = constants.NullString
-		} else if !re.MatchString(country) {
-			return structs.URLParams{}, errors.New("only 3 letter country codes are allowed")
-		} else {
+	country := queryParams.Get(constants.CountryString)
+	if country != "" && country != constants.NullString { // Country is defined
+		if !re.MatchString(country) { // Country name is invalid
+			return structs.URLParams{}, errors.New("country name can either be empty or contain 3-50 letters")
+		} else if len(country) > 3 { // Country name is valid and longer than 3 letters
+			c, err := convertNameToCode(country)
+			if err != nil {
+				return structs.URLParams{}, err
+			}
+			params.Country = c
+		} else { // Country name is valid and 3 letters --> Country name == country code
 			params.Country = strings.ToUpper(country)
 		}
 	}
@@ -182,8 +186,9 @@ func validateCountry(queryParams url.Values, pathParts []string, re *regexp.Rege
 }
 
 // histCountryRegex validates the country parameter in the URL path for the historical endpoint.
+// TODO: Combine the regex functions into one function.
 func histCountryRegex(queryParams url.Values, pathParts []string) error {
-	re := regexp.MustCompile(`^$|^[a-zA-Z]{3}$|^null$`)
+	re := regexp.MustCompile(`^$|^[a-zA-Z\s]{3,50}$`)
 	return validateCountry(queryParams, pathParts, re)
 }
 
