@@ -11,14 +11,18 @@ import (
 // Collection name in Firestore
 var collection = "webhooks"
 
-// AddWebhook /*
+/*
+Function that adds webhook to firestore-database.
+*/
 func AddWebhook(url string, country string, noCalls int) (string, error) {
 
+	//Hashes webhook to create a unique ID
 	webhookId := hashing_utility.HashingTheWebhook(url, country, noCalls)
 
 	response := client.Collection(collection).Doc(webhookId)
 	_, err := response.Get(ctx)
 
+	//Adds values to the webhook.
 	_, err = response.Set(ctx, map[string]interface{}{
 		"webhookId": webhookId,
 		"url":       url,
@@ -32,11 +36,15 @@ func AddWebhook(url string, country string, noCalls int) (string, error) {
 		return webhookId, nil
 	}
 }
+
+/*
+Function to get and display webhook. Uses the webhookID as paramter, and returns a webhook-struct and/or error.
+*/
 func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebhook, error) {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	doc, err := getResponse.Get(ctx)
 	if err != nil {
-		return structs.RegisteredWebhook{}, errors.New("webhook not found")
+		return structs.RegisteredWebhook{}, errors.New(constants.WebhookNotFound)
 	}
 
 	var webhookToBeDisplayed structs.RegisteredWebhook
@@ -47,6 +55,9 @@ func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebhook, error) {
 	return structs.RegisteredWebhook{}, nil
 }
 
+/*
+Function that deletes a webhook from the database. Takes in the webhookID to be deleted.
+*/
 func DeletionOfWebhook(webhookID string) error {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	_, err := getResponse.Get(ctx)
@@ -93,7 +104,7 @@ func GetAllWebhooks() ([]structs.RegisteredWebhook, error) {
 	}
 
 	if len(webhooks) == 0 {
-		return []structs.RegisteredWebhook{}, errors.New("database is empty")
+		return []structs.RegisteredWebhook{}, errors.New(constants.EmptyDatabase)
 	}
 
 	return webhooks, nil
