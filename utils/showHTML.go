@@ -8,12 +8,24 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 // DisplayDefaultPage is used for displaying HTML files.
 func DisplayDefaultPage(w http.ResponseWriter, filePath string) {
-	// Set content type to html
-	w.Header().Set("Content-Type", "text/html")
+
+	// Set content type based on file extension
+	ext := filepath.Ext(filePath)
+	switch ext {
+	case ".html":
+		w.Header().Set("Content-Type", "text/html")
+	case ".js":
+		w.Header().Set("Content-Type", "application/javascript")
+	case ".css":
+		w.Header().Set("Content-Type", "text/css")
+	default:
+		w.Header().Set("Content-Type", "text/plain")
+	}
 
 	// Open the file
 	file, err := OpenFile(filePath)
