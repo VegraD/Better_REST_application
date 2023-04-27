@@ -7,9 +7,10 @@
 </head>
 
 <body>
-    <h1>Renewables API</h1>
-    <p>This is the default endpoint for the Renewables API.</p>
-    <h2>Endpoints</h2>
+<h1>Renewables API</h1>
+<p>This is the default endpoint for the Renewables API.</p>
+<h2>Endpoints</h2>
+<div class="container">
     <nav>
         <ul>
             <li><a href="/energy/v1/renewables/current">Current percentage of renewables</a></li>
@@ -19,6 +20,33 @@
             <li><a href="/energy/v1/readme">Readme</a></li>
         </ul>
     </nav>
+    <div id="response-container"></div>
+</div>
+<div id="input-fields" style="display: none;">
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country">
+    </div>
+    <div>
+        <label for="neighbours">Neighbours:</label>
+        <input type="checkbox" id="neighbours" name="neighbours">
+    </div>
+    <div>
+        <label for="begin">Begin year:</label>
+        <input type="number" id="begin" name="begin">
+    </div>
+    <div>
+        <label for="end">End year:</label>
+        <input type="number" id="end" name="end">
+    </div>
+    <div>
+        <label for="sortByValue">Sort by value:</label>
+        <input type="checkbox" id="sortByValue" name="sortByValue">
+    </div>
+    <button id="search-button" style="display: none;">Search</button>
+</div>
+<script src="/static/html/responseContainer.js"></script>
+<script src="/static/html/inputFields.js"></script>
 </body>
 </html>
 
