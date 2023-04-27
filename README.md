@@ -468,6 +468,219 @@ Response:
     ...
 ]
 ```
+
+## - Notification endpoint
+
+---
+###  - Description
+Notification is the endpoint where the user is able to register webhooks that are triggered by the service
+based on specified events, often tied to a URL where the user wishes to be notified.
+
+The user can register multiple webhooks, view all or a specific webhook and delete a webhook. The webhooks are
+persistent, and therfore survive after service restart.
+
+##### Root path
+The root path of this endpoint is as follows: `/energy/v1/notifications`
+
+##### Parameters
+The enpoint has the following parameter: `{id}`
+
+Where id is the webhook id. The id is, in some cases optional. For instance, when wanting to return all the 
+registered webhooks, one can omit the id. When deleting an id, however, the id field is needed. 
+
+
+##### Full path
+Thus, the full path of the endpoint is: `/energy/v1/notifications/{id}`
+
+
+
+### Registration of webhook
+#### - Request
+```
+Method: POST
+Path: /energy/v1/notifications
+```
+Where content type must be `application/json`
+
+The body should contain
+- The URL that is triggered upon an event (i.e. the URL the user wants to invoke)
+- The country the trigger applies to (if empty -> triggered from any invocation)
+- The number of invocations needed for triggering a notification.
+
+Example of body request:
+```
+{
+  "url": "https://localhost:8080/client/",
+  "country": "NOR",
+  "calls": 10
+}
+```
+
+#### - Response
+
+The response given back to a user POST request, is the registration id of the webhook.
+This id may later be used to view this specific webhooks or delete it from the database.
+The id of the webhooks is computed via a hashing utility, which takes into account the 
+webhooks URL, country, and calls. When registering a webhook, the service will make sure
+no equal webhooks can be registered.
+
+- Content type: `application/json`
+- Status codes
+  - `201 Created`: Webhook was created successfully.
+  - `204 No content`: Given if none of the other status codes are given.
+  - `400 Bad request`: Something was wrong with the request body.
+  - `500 Internal server error`: Something unexpected happened on the server side
+- The webhook id is also returned.
+
+Example of body response:
+
+```
+{
+  "webhook_id": "103c1190ed8ea0fa3"
+}
+```
+
+### Deletion of webhook
+
+#### - Request
+```
+Method: DELETE
+Path: /energy/v1/notifications/{id}
+```
+- where `{id}` is the id of the webhooks returned during webhook registration.
+
+#### - Response
+
+- Status codes:
+  - `200 OK`: Webhook was successfully deleted
+  - `204 No content`: Database is empty
+  - `304 Not Modified`: If no webhook with the given id was found
+  - `400 Bad request`: The id does not exist in the database
+  - `500 Internal server error`: Something unexpected happened on the server side
+
+### View single registered webhook
+#### - Request
+```
+Method: GET
+Path: /energy/v1/notifications/{id}
+```
+- where `{id}` is the id of the webhooks returned during webhook registration.
+
+#### - Response
+
+- Content type : `application/json`
+- Status codes:
+  - `200 OK`: Webhook was successfully fetched
+  - `204 No content`: Database is empty
+  - `400 Bad request`: The id is not found in the database
+  - `500 Internal server error`: Something unexpected happened on the server side
+
+Example of body response:
+```
+{
+  "webhook_id": "103c1190ed8ea0fa3",
+  "url": "https://localhost:8080/client/",
+  "country": "NOR", 
+  "calls": 5
+}
+```
+
+
+### View all registered webhooks
+#### - Request
+```
+Method: GET
+Path: /energy/v1/notifications/
+```
+#### - Response
+
+- Content type : `application/json`
+- Status codes:
+  - `200 OK`: All webhooks were fetched
+  - `204 No content`: Database is empty
+  - `500 Internal server error`: Something unexpected happened on the server side
+
+
+Example of body response:
+
+```
+[
+   {
+      "webhook_id": "103c1190ed8ea0fa3",
+      "url": "https://localhost:8080/client/",
+      "country": "NOR",
+      "calls": 5
+   },
+   {
+      "webhook_id": "0cef6556124ca6af3f",
+      "url": "https://localhost:8081/anotherClient/",
+      "country": "FIN",
+      "calls": 10
+   },
+   ...
+]
+```
+
+
+## Webhook invocation
+
+---
+Webhooks will notify the user when it has been called the same amount as specified in `calls`.
+Upon webhook invocation (the correct amount of times), the server will send notification information as follows:
+
+```
+Method: POST
+Path: <URL specified by user in webhooks registration>
+```
+- Content type : `application/json`
+
+Example body:
+```
+{
+  "webhook_id": "103c1190ed8ea0fa3",
+  "country": "NOR", 
+  "calls": 5
+}
+```
+
+## - Status endpoint
+
+---
+The status endpoint provides information on whether the service is up and running or not.
+It does this by checking the status codes received from the different service endpoints 
+we have defined above. It will, in addition, provide the number of webhooks currently registered
+in the database.
+
+The root path of this endpoint is: `energy/v1/status/`.
+
+### - Request
+```
+Method: GET
+Path: energy/v1/status
+```
+
+### - Response
+
+
+
+- Example of body response:
+```
+{
+    "countries_api": "200 OK",
+    "markdown_html_api": "200 OK",
+    "notification_db": "200 OK",
+    "webhooks": 6,
+    "version": "v1",
+    "uptime": 86
+}
+```
+Where:
+- `countries_api`: status of the third party country API
+- `markdown_html_api`: status of the markdown API
+- `notification_db`: status of the webhooks database 
+- `webhooks`: the amount of webhooks in the database
+- `uptime`: the service uptime in seconds
+
 ## Service Compilation requirements
 
 ---

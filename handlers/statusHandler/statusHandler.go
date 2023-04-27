@@ -35,13 +35,13 @@ func getApiStatus(url string) string {
 }
 
 // getWebhookAmount is a method to get the amount of webhooks in the database.
-func getWebhookAmount() int {
-	webhookAmount, err := database.GetWebhookAmount()
-	if err != nil {
-		log.Printf("Error in getting webhook amount: %s", err)
-	}
-	return webhookAmount
-}
+//func getWebhookAmount() int {
+//	webhookAmount, err := database.GetWebhookAmount()
+//	if err != nil {
+//		log.Printf("Error in getting webhook amount: %s", err)
+//	}
+//	return webhookAmount
+//}
 
 // getMarkdownApiStatus The markdown api does not accept any get requests, so this function will send a post request with a markdown
 // string to the api, and return the status of the response.
@@ -84,7 +84,7 @@ func Status() structs.Status {
 		CountriesApi:    country,
 		MarkdownHtmlApi: markdown,
 		NotificationDB:  notification,
-		Webhooks:        getWebhookAmount(),
+		Webhooks:        database.GetWebhookAmount(),
 		Version:         constants.Version,
 		Uptime:          utils.Uptime(),
 	}
