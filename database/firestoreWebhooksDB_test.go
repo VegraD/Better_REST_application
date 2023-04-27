@@ -1,11 +1,11 @@
 package database
 
 import (
-	"assignment-2/structs"
 	hashing_utility "assignment-2/utils/hashing-utility"
-	"reflect"
 	"testing"
 )
+
+var webhookIDs []string
 
 func TestAddWebhook(t *testing.T) {
 	type args struct {
@@ -57,92 +57,67 @@ func TestClearDB(t *testing.T) {
 	}
 }
 
-/*
-func TestDatabaseSetup(t *testing.T) {
-	tests := []struct {
-		name string
-		want []string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := TestDatabaseSetup(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("TestDatabaseSetup() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-*/
-
 func TestDeletionOfWebhook(t *testing.T) {
 	type args struct {
 		webhookID string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name      string
+		args      args
+		wantedErr error
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test to delete a webhook",
+			args: args{
+				webhookID: webhookIDs[1],
+			},
+			wantedErr: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := DeletionOfWebhook(tt.args.webhookID); (err != nil) != tt.wantErr {
-				t.Errorf("DeletionOfWebhook() error = %v, wantErr %v", err, tt.wantErr)
+			err := DeletionOfWebhook(tt.args.webhookID)
+			if err != nil && err.Error() != tt.wantedErr.Error() {
+				t.Errorf("DeletionOfWebhook() error = %v, wantErr %v", err, tt.wantedErr)
 			}
 		})
 	}
 }
 
-func TestGetAllWebhooks(t *testing.T) {
-	tests := []struct {
-		name    string
-		want    []structs.RegisteredWebhook
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetAllWebhooks()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetAllWebhooks() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetAllWebhooks() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
+/*
 func TestGetAndDisplayWebhook(t *testing.T) {
 	type args struct {
 		webhookID string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    structs.RegisteredWebhook
-		wantErr bool
+		name            string
+		args    	    args
+		wantedWebhook   structs.RegisteredWebhook
+		wantedErr       error
 	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
+		{
+			name: "",
+			args: args{
+				webhookID: webhookIDs[3],
+			},
+			wantedWebhook: ,
+
+		}
+	},
+		for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := GetAndDisplayWebhook(tt.args.webhookID)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetAndDisplayWebhook() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil && err.Error() != tt.wantedErr.Error() {
+				t.Errorf("GetAndDisplayWebhook() error = %v, wantErr %v", err, tt.wantedErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetAndDisplayWebhook() got = %v, want %v", got, tt.want)
+			if !reflect.DeepEqual(got, tt.wantedWebhook) {
+				t.Errorf("GetAndDisplayWebhook() got = %v, want %v", got, tt.wantedWebhook)
 			}
 		})
 	}
 }
+*/
 
 func TestGetWebhookAmount(t *testing.T) {
 	tests := []struct {
