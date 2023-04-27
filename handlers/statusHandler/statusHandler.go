@@ -17,7 +17,8 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		handleStatusRequest(w, r)
+		status := Status()
+		json_coder.PrettyPrint(w, status)
 	default:
 		http.Error(w, "REST Method '"+r.Method+"' not supported. Currently only '"+http.MethodGet+
 			"' is supported.", http.StatusNotImplemented)
@@ -63,24 +64,23 @@ func getMarkdownApiStatus(url string) string {
 
 // handleStatusRequest is a method to check the status for the apis that is used
 // in the program, and "pretty print" it to the user.
-func handleStatusRequest(w http.ResponseWriter, r *http.Request) {
+func handleStatusRequest() (string, string, string) {
 
 	countryResp := getApiStatus(constants.CountryApi)
 
 	markdownResp := getMarkdownApiStatus(constants.MarkdownToHTMLApi)
 
 	//TODO: Add correct url
-	notificationResp := getApiStatus("https://restcountries.com/")
+	notificationResp := getApiStatus(constants.FireStoreApi)
 
-	//TODO: Add correct url
-	webhookResp := getApiStatus("https://restcountries.com/")
-
-	json_coder.PrettyPrint(w, Status(countryResp, markdownResp, notificationResp, webhookResp))
+	return countryResp, markdownResp, notificationResp
 }
 
 // Status is a method to create a status struct
-func Status(country string, markdown, notification string, webhook string) structs.Status {
-	return structs.Status{
+func Status() structs.Status {
+	country, markdown, notification := handleStatusRequest()
+
+	status := structs.Status{
 		CountriesApi:    country,
 		MarkdownHtmlApi: markdown,
 		NotificationDB:  notification,
@@ -88,4 +88,6 @@ func Status(country string, markdown, notification string, webhook string) struc
 		Version:         constants.Version,
 		Uptime:          utils.Uptime(),
 	}
+
+	return status
 }
