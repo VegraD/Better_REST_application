@@ -747,3 +747,4 @@ ___
 - The application could be tested better various places in the code, such as in the Firestore-database.
 - The use of stubbing in testers should be more of a priority, as we take data straight from the API. (Noted that this application do not use large parts of data, which comprehensively improves the testing more than using the whole API).
 - Error-handling could be more comprehensive, and the use of constant-error-messages could be more comprehensively used.
+- In out database there is an empty struct, that we were unable to delete. 
