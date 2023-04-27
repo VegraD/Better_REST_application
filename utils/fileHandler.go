@@ -4,6 +4,7 @@ import (
 	"assignment-2/constants"
 	"assignment-2/structs"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -106,4 +107,23 @@ func GetCountriesFromCsv() ([]structs.CountryInfo, error) {
 	}
 
 	return countries, nil
+}
+
+// GetCountriesFromJson reads the JSON file and returns a Countries struct.
+func GetBordersFromJson() ([]structs.Border, error) {
+	// Open the JSON file
+	file, err := OpenFile(constants.CountriesJSON)
+	if err != nil {
+		return []structs.Border{}, err
+	}
+	defer CloseFile(file)
+
+	// Decode the JSON data
+	var borders []structs.Border
+	err2 := json.NewDecoder(file).Decode(&borders)
+	if err2 != nil {
+		return []structs.Border{}, err2
+	}
+
+	return borders, nil
 }
