@@ -1,43 +1,33 @@
 # assignment-2
 
-## Renewables
-### Description
-Renewables is a directory containing the historical percentage of renewables endpoint and the current percentage of
-renewables endpoint. 
+## Description
+This is an assignment for the course [IDATG2005](https://www.ntnu.edu/studies/courses/PROG2005#tab=omEmnet) at 
+[NTNU](https://www.ntnu.edu/). The assignment is to create a REST API that provides data about the percentage of
+renewables in the energy mix for different countries. The data for the share of renewable energy can be found 
+[here](https://drive.google.com/file/d/18G470pU2NRniDfAYJ27XgHyrWOThP__p/view), and the API for the neighbouring 
+countries can be found [here](https://restcountries.com/).
 
-Both endpoints will return a JSON object containing the percentage of renewables in the energy mix for the selected 
-country or countries.
-- Historical percentage of renewables endpoint will return the percentage of renewables for
-each year from the begin year to the end year.
--  Current percentage of renewables endpoint will return the percentage
-of renewables for the latest year for which data is available.
+## Graphical user interface
+As an addition to the requirements a simple graphical user interface has been created to navigate the API and search
+for countries and view this readme document. The GUI is available at the root path of the API. If you are running it 
+locally this would be [localhost:8080](http://localhost:8080/) and if you run it though the deployed docker container
+it can be found at this [ip-address](http://10.212.170.218:8080/).
 
-##### Root paths
-The endpoints have the following root paths:
-- Historical percentage of renewables: `/energy/v1/renewables/history`
-- Current percentage of renewables: `/energy/v1/renewables/current`
+If you do not wish to use the gui and instead enter the URL manually you can find examples of the different endpoints
+further down in this document.
 
-##### placeholders for query parameters
-This document have the following conventions for placeholders:
-- `{value?}` - optional value
-- `{?parameter?}` - optional parameter 
+The GUI can be navigated by clicking on the different links. When you click either the "Current percentage of 
+renewables" or the "Historical percentages of renewables" links you will be presented with input fields where you can
+enter the relevant parameters for the endpoint. The input fields will be different depending on which endpoint you
+choose. After entering the parameters you can click the "Search" button and the response will be displayed below the
+input fields. If you wish to search for another country or countries you can simply enter the new parameters and click
+the "Search" button again. The response will be updated with the new response. If you click the same link again the 
+input fields will be hidden again.
 
-#### Full endpoint paths
-The endpoints have the following full paths:
-- Current percentage of renewables: `/energy/v1/renewables/current/{country?}{?sortByValue=bool?}`
-- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}{?begin=year&end=year?}{?sortByValue=bool?}`
+If you click the "Readme" link you will be taken to this document.
 
-##### Alternative to query parameters
-The endpoints also have an alternative form where the parameters are placed in the path instead of as query parameters.
-The alternative form is as follows:
-- Current percentage of renewables: `/energy/v1/renewables/current/{country?}/{bool?}`
-- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}/{year?}/{year?}/{bool?}`
 
-***Note:*** All renewable endpoints are case-insensitive, so all parameter and values can be entered in any case.
-
----
-
-## - File structure
+## - Tree view of the file structure
 ```
 Assignment-2
 |   .gitignore
@@ -48,16 +38,7 @@ Assignment-2
 |   go.sum
 |   README.md
 |
-+---.idea
-|   |   .gitignore
-|   |   assignment-2.iml
-|   |   misc.xml
-|   |   modules.xml
-|   |   vcs.xml
-|   |   workspace.xml
-|   |
-|   \---inspectionProfiles
-|           Project_Default.xml
+|
 |
 +---cmd
 |       main.go
@@ -69,6 +50,7 @@ Assignment-2
 |
 +---database
 |       firestoreWebhooksDB.go
+|       firestoreWebhooksDB_test.go
 |       initFirestore.go
 |
 +---handlers
@@ -118,6 +100,8 @@ Assignment-2
 |   |
 |   \---html
 |           defEndpoint.html
+|           inputFields.js
+|           responseContainer.js
 |
 +---structs
 |       structs.go
@@ -134,7 +118,45 @@ Assignment-2
 |
 \---webhooks
         webhooks.go
+
 ```
+
+## Renewables
+### Description
+Renewables is a directory containing the historical percentage of renewables endpoint and the current percentage of
+renewables endpoint. 
+
+Both endpoints will return a JSON object containing the percentage of renewables in the energy mix for the selected 
+country or countries.
+- Historical percentage of renewables endpoint will return the percentage of renewables for
+each year from the begin year to the end year.
+-  Current percentage of renewables endpoint will return the percentage
+of renewables for the latest year for which data is available.
+
+##### Root paths
+The endpoints have the following root paths:
+- Historical percentage of renewables: `/energy/v1/renewables/history`
+- Current percentage of renewables: `/energy/v1/renewables/current`
+
+##### placeholders for query parameters
+This document have the following conventions for placeholders:
+- `{value?}` - optional value
+- `{?parameter?}` - optional parameter 
+
+#### Full endpoint paths
+The endpoints have the following full paths:
+- Current percentage of renewables: `/energy/v1/renewables/current/{country?}{?sortByValue=bool?}`
+- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}{?begin=year&end=year?}{?sortByValue=bool?}`
+
+##### Alternative to query parameters
+The endpoints also have an alternative form where the parameters are placed in the path instead of as query parameters.
+The alternative form is as follows:
+- Current percentage of renewables: `/energy/v1/renewables/current/{country?}/{bool?}`
+- Historical percentage of renewables: `/energy/v1/renewables/history/{country?}/{year?}/{year?}/{bool?}`
+
+***Note:*** All renewable endpoints are case-insensitive, so all parameter and values can be entered in any case.
+
+---
 
 ##  - Current percentage of renewables endpoint
 
