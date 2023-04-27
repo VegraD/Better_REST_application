@@ -6,6 +6,7 @@ import (
 	"assignment-2/utils/hashing-utility"
 	"errors"
 	"google.golang.org/api/iterator"
+	"log"
 )
 
 // Collection name in Firestore
@@ -123,16 +124,21 @@ func UpdateWebhooks(url string, country string, noCalls int, count int) (string,
 /*
 A method for getting the total number of webhooks in the database
 */
-func GetWebhookAmount() (int, error) {
+func GetWebhookAmount() int {
 
 	// Get all webhooks from database
 	webhooks, err := GetClient().Collection(collection).Documents(GetContext()).GetAll()
 
 	if err != nil {
-		return 0, err
+		log.Print("No documents found in the specified collection" + err.Error())
+		return 0
+	}
+	if len(webhooks) == 0 {
+		log.Print("No documents found in the specified collection")
+		return 0
 	}
 
-	return len(webhooks), nil
+	return len(webhooks)
 }
 
 /*
