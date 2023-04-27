@@ -44,7 +44,7 @@ func GetAndDisplayWebhook(webhookID string) (structs.RegisteredWebhook, error) {
 	getResponse := client.Collection(collection).Doc(webhookID)
 	doc, err := getResponse.Get(ctx)
 	if err != nil {
-		return structs.RegisteredWebhook{}, errors.New("webhook not found")
+		return structs.RegisteredWebhook{}, errors.New(constants.WebhookNotFound)
 	}
 
 	var webhookToBeDisplayed structs.RegisteredWebhook
@@ -104,7 +104,7 @@ func GetAllWebhooks() ([]structs.RegisteredWebhook, error) {
 	}
 
 	if len(webhooks) == 0 {
-		return []structs.RegisteredWebhook{}, errors.New("database is empty")
+		return []structs.RegisteredWebhook{}, errors.New(constants.EmptyDatabase)
 	}
 
 	return webhooks, nil

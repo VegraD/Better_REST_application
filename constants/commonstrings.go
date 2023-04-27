@@ -33,4 +33,5 @@ const (
 	MarshallingErr  string = "Error during marshalling: "
 	PrettyPrintErr  string = "Error during pretty printing: "
 	WebhookNotFound string = "webhook was not found"
+	EmptyDatabase   string = "database is empty"
 )
