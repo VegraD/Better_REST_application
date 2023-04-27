@@ -201,7 +201,9 @@ func computeMean(countries []structs.CountryInfo, params structs.URLParams) []st
 		for _, country := range countries {
 			if country.IsoCode == isoCode {
 				country.Percentage = float32(mean)
-				country.Year = 0 // Set Year field to 0, so it's omitted in the json response.
+				if params.EndPoint == constants.History {
+					country.Year = 0 // Set Year field to 0, so it's omitted in the json response.
+				}
 				newCountries = append(newCountries, country)
 				break
 			}
