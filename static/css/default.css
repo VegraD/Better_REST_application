@@ -57,3 +57,87 @@ pre {
     padding: .8em;
     overflow-x: auto;
 }
+
+nav {
+    background-color: var(--color-background);
+    padding: 1em;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    margin: 0.5em 0;
+}
+
+nav a {
+    color: var(--color-link);
+    text-decoration:none;
+}
+nav a:hover{
+    color : var(--color-link-hover);
+}
+
+.container {
+    position: relative;
+}
+
+#response-container {
+    /* position: absolute; */
+    top: 0;
+    /* left: 50%; */
+    margin-top: 2em;
+}
+
+#input-fields {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#input-fields div {
+    margin-bottom: 1em;
+}
+
+#input-fields label {
+    display: inline-block;
+    width: 10em;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+.key {
+    color: lightskyblue;
+}
+
+.string {
+    color: darkseagreen;
+}
+
+.number {
+    color: darkorange;
+}
+
+.boolean {
+    color: indianred;
+}
+
+.null {
+    color: magenta;
+}
+
+#search-button {
+    margin-top: -2em;
+}
+
+#input-fields {
+    position: absolute !important;
+    top: 25% !important;
+    right: 40% !important;
+    transform: translate(50%, -50%) !important;
+}
