@@ -26,6 +26,6 @@ func getDefault(w http.ResponseWriter, r *http.Request) {
 		// Custom func for displaying the HTML file in the browser that handles errors.
 		utils.DisplayDefaultPage(w, constants.DefaultHtml)
 	default:
-		//http.Error(w, http.StatusText(http.StatusNotFound)+constants.CheckURL, http.StatusNotFound)
+		// http.Error(w, "Endpoint not found!", http.StatusNotFound)
 	}
 }

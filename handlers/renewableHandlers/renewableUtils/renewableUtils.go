@@ -39,8 +39,9 @@ func SpecifiedCountryResponse(w http.ResponseWriter, params structs.URLParams) {
 	// Sort the data by percentage of renewable energy production if sortByValue is true
 	sortByValue(params.SortByValue, countryData)
 
-	// Check and invoke webhooks
+	// Errors are handled in the function
 	webhooks.InvokeWebhook(params.Country)
+
 	// Write response
 	json_coder.PrettyPrint(w, countryData)
 }
@@ -73,7 +74,7 @@ func AllCountriesResponse(w http.ResponseWriter, params structs.URLParams) {
 	// Sort the data by percentage if sortByValue is true
 	sortByValue(params.SortByValue, filteredCountriesMean)
 
-	// check and invoke webhooks
+	// Errors are handled in the function
 	webhooks.InvokeWebhook(params.Country)
 
 	// Write the response
@@ -200,9 +201,7 @@ func computeMean(countries []structs.CountryInfo, params structs.URLParams) []st
 		for _, country := range countries {
 			if country.IsoCode == isoCode {
 				country.Percentage = float32(mean)
-				if params.EndPoint == constants.History {
-					country.Year = 0 // Set Year field to 0, so it's omitted in the json response.
-				}
+				country.Year = 0 // Set Year field to 0, so it's omitted in the json response.
 				newCountries = append(newCountries, country)
 				break
 			}
