@@ -703,9 +703,19 @@ Where:
 - `webhooks`: the amount of webhooks in the database
 - `uptime`: the service uptime in seconds
 
-## Service Compilation requirements
+## Deployment of application
+___
+This application is deployed on the following URL: 
 
----
+- http://10.212.170.218:8080/ 
+
+This is runs in docker on a VM in SkyHigh. This is only available on the 
+NTNU internal network, and can be required with VPN or being on campus.
+
+If you wish to run this application locally, you can create a Docker container or just run the source code. 
+
+
+### Service Compilation requirements
 
 There are some files needed for the application to compile and work.
 
@@ -714,6 +724,9 @@ There are some files needed for the application to compile and work.
 Name of key: `assignment-2-key.json`
 
 Location: `/assignment-2/assignment-2-key.json`
+
+This is a key used to connect with Google Firestore, and has to be manually put into the project for
+the application to compile and run. This can be acquired from the Google Firestore Console.
 
 #### Hashing Secret
 
@@ -733,6 +746,23 @@ func getSecret() []byte {
 	return secret
 }
 ```
+
+### Docker deployment
+___
+
+To deploy the application:
+1. Clone the repository
+2. Meet the requirements of complation
+3. You have to install these following packages on your computer:
+   4. `docker.io`
+   5. `docker-compose`
+6. Then open the terminal and navigate to the `/assignment-2/` directory.
+7. Run this command to create and run Docker-container
+   8. `docker compose up -d`
+
+
+The container is now up and running on port `8080` on your local computer. 
+
 
 
 

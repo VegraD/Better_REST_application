@@ -149,7 +149,7 @@ func GetCurrentDataParams(r *http.Request) (structs.URLParams, error) {
 	}
 	params.Country = strings.ToUpper(country)
 
-	neighbours := queryParams.Get(constants.NeighboursString) == constants.TrueString
+	neighbours := strings.EqualFold(queryParams.Get(constants.NeighboursString), "true") //queryParams.Get(constants.NeighboursString) == constants.TrueString
 	params.Neighbours = neighbours
 
 	return params, nil

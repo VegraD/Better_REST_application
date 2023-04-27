@@ -323,7 +323,7 @@ func TestNeighbours(t *testing.T) {
 			name: "Valid Get Request to Current Endpoint with Country as mixed-case full country name and neighbours " +
 				"set to true",
 			args: args{
-				url: currentEndpoint.URL + constants.CurrentEP + "NoRWaY?neighbours=true",
+				url: currentEndpoint.URL + constants.CurrentEP + "NoRWaY?neighbours=tRUe",
 			},
 			method:             http.MethodGet,
 			expectedStatusCode: http.StatusOK,
