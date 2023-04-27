@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // TODO: implement with persistent storage
@@ -32,7 +33,7 @@ func InvokeWebhook(country string) error {
 		}
 	}
 	for _, v := range webhooks {
-		if v.Country == country {
+		if strings.EqualFold(v.Country, country) {
 			v.Count = v.Count + 1
 			if v.Calls <= v.Count {
 				v.Count = 0
